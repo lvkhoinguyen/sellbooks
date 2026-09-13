@@ -18,6 +18,9 @@
     <link rel="stylesheet" href="~/WebBanSach.styles.css" asp-append-version="true" />
 </head>
 <body>
+    <!-- 1. Scroll Progress Bar (Terracotta #C85A32) -->
+    <div id="scrollProgressBar" class="scroll-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Tiến trình đọc trang"></div>
+
     <!-- Top Announcement Bar -->
     <div class="py-2 text-center text-white small fw-medium" style="background-color: var(--color-primary); letter-spacing: 0.03em;">
         <span><i class="bi bi-gift-fill me-1"></i> Đóng gói quà tặng miễn phí &amp; Giao hàng toàn quốc cho đơn từ 250.000₫ • Nhà sách độc lập từ 2018</span>
@@ -25,7 +28,7 @@
 
     <!-- Main Navigation Header -->
     <header class="sticky-top">
-        <nav class="navbar navbar-expand-lg navbar-glass py-3">
+        <nav id="mainNavbar" class="navbar navbar-expand-lg navbar-glass py-3 main-navbar">
             <div class="container-fluid px-lg-5">
                 <!-- Brand / Logo -->
                 <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">

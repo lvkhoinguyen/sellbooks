@@ -3,16 +3,17 @@
     ViewData["Title"] = "Trang Chủ - Nhà Sách Độc Lập PageCraft";
 }
 
-<!-- 1. HERO SECTION -->
-<section class="py-5 position-relative overflow-hidden">
-    <!-- Ambient Blur Background Elements -->
-    <div class="position-absolute top-0 end-0 rounded-circle pointer-events-none" style="width: 420px; height: 420px; background: rgba(200, 90, 50, 0.08); filter: blur(90px); z-index: 0;"></div>
-    <div class="position-absolute bottom-0 start-0 rounded-circle pointer-events-none" style="width: 350px; height: 350px; background: rgba(81, 99, 79, 0.08); filter: blur(80px); z-index: 0;"></div>
+<!-- 1. HERO SECTION WITH PARALLAX & 3D FLOATING BOOK -->
+<section class="py-5 position-relative overflow-hidden hero-parallax-stage" id="heroSection">
+    <!-- Ambient Blur Background Elements (Parallax Controlled) -->
+    <div class="hero-ambient-circle hero-ambient-1 position-absolute rounded-circle pointer-events-none" id="ambientCircle1"></div>
+    <div class="hero-ambient-circle hero-ambient-2 position-absolute rounded-circle pointer-events-none" id="ambientCircle2"></div>
+    <div class="hero-ambient-circle hero-ambient-3 position-absolute rounded-circle pointer-events-none" id="ambientCircle3"></div>
 
     <div class="container px-4 px-lg-5 position-relative" style="z-index: 1;">
         <div class="row align-items-center g-5">
             <!-- Left Editorial Text -->
-            <div class="col-lg-7 text-start">
+            <div class="col-lg-7 text-start hero-text-col reveal-on-scroll">
                 <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-4" style="background: var(--bg-surface-high);">
                     <span class="rounded-circle bg-terracotta d-inline-block" style="width: 8px; height: 8px;"></span>
                     <span class="text-uppercase fw-bold small text-terracotta" style="font-size: 0.75rem; letter-spacing: 0.12em;">Tuyển Chọn Nổi Bật • Mùa Thu 2026</span>
@@ -32,9 +33,9 @@
                         <span>Khám Phá Sách Hay</span>
                         <i class="bi bi-arrow-right"></i>
                     </a>
-                    <a asp-controller="Category" asp-action="Index" class="btn btn-outline-terracotta d-inline-flex align-items-center gap-2">
+                    <a asp-controller="Home" asp-action="Shop" class="btn btn-outline-terracotta d-inline-flex align-items-center gap-2">
                         <i class="bi bi-bookmarks"></i>
-                        <span>Xem Toàn Bộ Thể Loại</span>
+                        <span>Xem Toàn Bộ Cửa Hàng</span>
                     </a>
                 </div>
 
@@ -55,29 +56,31 @@
 
             <!-- Right 3D Book Showcase -->
             <div class="col-lg-5 text-center">
-                <div class="position-relative d-inline-block mx-auto" style="max-width: 360px;">
-                    <!-- Ribbon -->
-                    <div class="position-absolute top-0 end-0 translate-middle-y me-3 bg-sage text-white px-3 py-1 rounded-pill shadow-sm small fw-bold text-uppercase d-flex align-items-center gap-1" style="z-index: 3; letter-spacing: 0.08em; font-size: 0.72rem;">
-                        <i class="bi bi-stars"></i>
-                        <span>Sách Tiêu Biểu • Tháng 10</span>
-                    </div>
-
-                    <!-- Book Card Container -->
-                    <div class="bg-white p-4 rounded-4 shadow-lg text-start position-relative" style="z-index: 2; border: 1px solid rgba(222, 192, 183, 0.4);">
-                        <div class="book-cover-container mb-3" style="aspect-ratio: 3/4;">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfB6zfERYPybvsHk6_001w9XriafDx-0J6zio3sU9CJg0tcsYs5D0spPza8S2p7E8Y6LONHvD-kX012pcPXJzh38ETdJMWvIdRx6lQsSt5gvnMmdl_AMhC5mxJEphT25QAhBGsA-Cu-B_ta3m9swZcMwkNYh-gdrnjUPRQ6Knxde2uQN0OvLxM6USncHpbV5Jfm2OMVglg_cehHPFlf-61jFqWwzsxrbCi9LAELl38QNCwW02vFk" 
-                                 alt="The Echoes of Autumn" class="w-100 h-100 object-fit-cover" />
-                            <div class="book-spine-crease"></div>
+                <div class="hero-book-stage">
+                    <div id="hero3DBook" class="hero-book-3d position-relative d-inline-block mx-auto" style="max-width: 360px;">
+                        <!-- Ribbon -->
+                        <div class="position-absolute top-0 end-0 translate-middle-y me-3 bg-sage text-white px-3 py-1 rounded-pill shadow-sm small fw-bold text-uppercase d-flex align-items-center gap-1 hero-floating-ribbon" style="z-index: 3; letter-spacing: 0.08em; font-size: 0.72rem;">
+                            <i class="bi bi-stars"></i>
+                            <span>Sách Tiêu Biểu • Tháng 10</span>
                         </div>
 
-                        <div class="p-3 rounded-3 bg-surface-low d-flex align-items-center justify-content-between">
-                            <div>
-                                <h5 class="font-serif fw-bold mb-1 fs-6 text-dark">The Echoes of Autumn</h5>
-                                <p class="small text-muted mb-0">Tác giả Eliza J. Harrison • <span class="text-sage fw-semibold">Bìa cứng</span></p>
+                        <!-- Book Card Container with 3D Depth -->
+                        <div class="bg-white p-4 rounded-4 shadow-lg text-start position-relative hero-book-card" style="z-index: 2; border: 1px solid rgba(222, 192, 183, 0.4);">
+                            <div class="book-cover-container mb-3" style="aspect-ratio: 3/4;">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfB6zfERYPybvsHk6_001w9XriafDx-0J6zio3sU9CJg0tcsYs5D0spPza8S2p7E8Y6LONHvD-kX012pcPXJzh38ETdJMWvIdRx6lQsSt5gvnMmdl_AMhC5mxJEphT25QAhBGsA-Cu-B_ta3m9swZcMwkNYh-gdrnjUPRQ6Knxde2uQN0OvLxM6USncHpbV5Jfm2OMVglg_cehHPFlf-61jFqWwzsxrbCi9LAELl38QNCwW02vFk" 
+                                     alt="The Echoes of Autumn" class="w-100 h-100 object-fit-cover" />
+                                <div class="book-spine-crease"></div>
                             </div>
-                            <div class="text-end">
-                                <div class="fw-bold text-terracotta fs-5">245.000₫</div>
-                                <small class="text-muted text-decoration-line-through">295.000₫</small>
+
+                            <div class="p-3 rounded-3 bg-surface-low d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h5 class="font-serif fw-bold mb-1 fs-6 text-dark">The Echoes of Autumn</h5>
+                                    <p class="small text-muted mb-0">Tác giả Eliza J. Harrison • <span class="text-sage fw-semibold">Bìa cứng</span></p>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-bold text-terracotta fs-5">245.000₫</div>
+                                    <small class="text-muted text-decoration-line-through">295.000₫</small>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -87,21 +90,92 @@
     </div>
 </section>
 
-<!-- 2. CURATED CATEGORIES SECTION -->
-<section id="categories" class="py-5 bg-surface-low border-top border-bottom" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+<!-- EDITORIAL MILESTONE STATS RIBBON (Counter Numbers on Scroll) -->
+<section class="py-4 py-lg-5 border-top border-bottom bg-surface-low position-relative overflow-hidden" id="editorialStats" style="border-color: rgba(222, 192, 183, 0.45) !important;">
     <div class="container px-4 px-lg-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-2">
+        <div class="row g-4 align-items-center justify-content-between text-center text-md-start reveal-stagger">
+            <!-- Stat 1: 12.000+ Readers -->
+            <div class="col-6 col-lg-3">
+                <div class="stat-milestone-card p-3 p-xl-4 rounded-4 bg-white border h-100 shadow-sm" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-terracotta">
+                        <i class="bi bi-people-fill fs-4"></i>
+                        <span class="text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.08em;">Cộng Đồng</span>
+                    </div>
+                    <div class="stat-number-wrapper d-flex align-items-baseline justify-content-start">
+                        <span class="stat-counter font-serif fw-bold text-dark display-6" data-counter-target="12000">0</span>
+                        <span class="stat-suffix font-serif text-terracotta fw-bold fs-3 ms-1">+</span>
+                    </div>
+                    <div class="text-dark fw-bold small mt-1">Độc Giả Thân Thiết</div>
+                    <div class="text-muted" style="font-size: 0.78rem;">Đồng hành qua từng trang sách</div>
+                </div>
+            </div>
+
+            <!-- Stat 2: 500+ Curated Books -->
+            <div class="col-6 col-lg-3">
+                <div class="stat-milestone-card p-3 p-xl-4 rounded-4 bg-white border h-100 shadow-sm" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-terracotta">
+                        <i class="bi bi-journal-bookmark-fill fs-4"></i>
+                        <span class="text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.08em;">Tủ Sách Tuyển Chọn</span>
+                    </div>
+                    <div class="stat-number-wrapper d-flex align-items-baseline justify-content-start">
+                        <span class="stat-counter font-serif fw-bold text-dark display-6" data-counter-target="500">0</span>
+                        <span class="stat-suffix font-serif text-terracotta fw-bold fs-3 ms-1">+</span>
+                    </div>
+                    <div class="text-dark fw-bold small mt-1">Ấn Phẩm Tuyển Chọn</div>
+                    <div class="text-muted" style="font-size: 0.78rem;">Bản dịch & bìa cứng độc quyền</div>
+                </div>
+            </div>
+
+            <!-- Stat 3: 99% Satisfaction -->
+            <div class="col-6 col-lg-3">
+                <div class="stat-milestone-card p-3 p-xl-4 rounded-4 bg-white border h-100 shadow-sm" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-sage">
+                        <i class="bi bi-heart-fill fs-4 text-terracotta"></i>
+                        <span class="text-uppercase fw-bold text-sage" style="font-size: 0.72rem; letter-spacing: 0.08em;">Độ Hài Lòng</span>
+                    </div>
+                    <div class="stat-number-wrapper d-flex align-items-baseline justify-content-start">
+                        <span class="stat-counter font-serif fw-bold text-dark display-6" data-counter-target="99">0</span>
+                        <span class="stat-suffix font-serif text-terracotta fw-bold fs-3 ms-1">%</span>
+                    </div>
+                    <div class="text-dark fw-bold small mt-1">Độc Giả Hài Lòng</div>
+                    <div class="text-muted" style="font-size: 0.78rem;">Đóng gói trân quý & giao nhanh</div>
+                </div>
+            </div>
+
+            <!-- Stat 4: 45.000+ Books Delivered -->
+            <div class="col-6 col-lg-3">
+                <div class="stat-milestone-card p-3 p-xl-4 rounded-4 bg-white border h-100 shadow-sm" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                    <div class="d-flex align-items-center gap-2 mb-2 text-terracotta">
+                        <i class="bi bi-box2-heart-fill fs-4"></i>
+                        <span class="text-uppercase fw-bold" style="font-size: 0.72rem; letter-spacing: 0.08em;">Vận Chuyển</span>
+                    </div>
+                    <div class="stat-number-wrapper d-flex align-items-baseline justify-content-start">
+                        <span class="stat-counter font-serif fw-bold text-dark display-6" data-counter-target="45000">0</span>
+                        <span class="stat-suffix font-serif text-terracotta fw-bold fs-3 ms-1">+</span>
+                    </div>
+                    <div class="text-dark fw-bold small mt-1">Bản Sách Đã Gửi Trao</div>
+                    <div class="text-muted" style="font-size: 0.78rem;">Khắp mọi miền đất nước</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. CURATED CATEGORIES SECTION -->
+<section id="categories" class="py-5 bg-surface-low border-bottom" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+    <div class="container px-4 px-lg-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-2 reveal-on-scroll">
             <div>
                 <span class="text-uppercase fw-bold text-terracotta small" style="letter-spacing: 0.12em;">Không Gian Đọc Sách</span>
                 <h2 class="font-serif fw-bold text-dark mb-0">Khám Phá Theo Cảm Hứng</h2>
             </div>
-            <a asp-controller="Category" asp-action="Index" class="text-terracotta text-decoration-none fw-semibold d-inline-flex align-items-center gap-1">
-                <span>Quản Lý Tất Cả Danh Mục</span>
+            <a asp-controller="Home" asp-action="Shop" class="text-terracotta text-decoration-none fw-semibold d-inline-flex align-items-center gap-1">
+                <span>Xem Toàn Bộ Sách Trong Cửa Hàng</span>
                 <i class="bi bi-arrow-right"></i>
             </a>
         </div>
 
-        <div class="row g-3">
+        <div class="row g-3 reveal-stagger">
             @if (Model != null && Model.Any())
             {
                 var sampleIcons = new[] { "bi-book", "bi-compass", "bi-lightbulb", "bi-cpu", "bi-pen", "bi-palette" };
@@ -111,12 +185,12 @@
                     var icon = sampleIcons[iconIdx % sampleIcons.Length];
                     iconIdx++;
                     <div class="col-6 col-md-4 col-lg-2">
-                        <a asp-controller="Category" asp-action="Edit" asp-route-id="@cat.Id" class="category-portal-card">
+                        <a asp-controller="Home" asp-action="Shop" asp-route-categoryId="@cat.Id" class="category-portal-card">
                             <div class="category-icon-bubble">
                                 <i class="bi @icon"></i>
                             </div>
                             <h6 class="fw-bold mb-1 text-truncate w-100">@cat.Name</h6>
-                            <small class="text-muted">Thứ tự: @cat.DisplayOrder</small>
+                            <small class="text-muted">Tuyển chọn #@cat.DisplayOrder</small>
                         </a>
                     </div>
                 }
@@ -173,21 +247,21 @@
 <!-- 3. CURRENT BESTSELLERS -->
 <section id="bestsellers" class="py-5">
     <div class="container px-4 px-lg-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3 reveal-on-scroll">
             <div>
                 <span class="text-uppercase fw-bold text-sage small" style="letter-spacing: 0.12em;">Được Yêu Thích Nhất</span>
                 <h2 class="font-serif fw-bold text-dark mb-0">Sách Bán Chạy Trong Tháng</h2>
             </div>
             <!-- Filter Pills -->
             <div class="d-flex flex-wrap gap-2 p-1 rounded-pill bg-surface-low border">
-                <button class="btn btn-sm btn-terracotta px-3 py-1 rounded-pill">Tất Cả</button>
-                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Tiểu Thuyết</button>
-                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Phi Hư Cấu</button>
-                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Triết Lý</button>
+                <a asp-controller="Home" asp-action="Shop" class="btn btn-sm btn-terracotta px-3 py-1 rounded-pill text-decoration-none">Tất Cả</a>
+                <a asp-controller="Home" asp-action="Shop" asp-route-searchString="Tiểu thuyết" class="btn btn-sm text-muted px-3 py-1 rounded-pill text-decoration-none">Tiểu Thuyết</a>
+                <a asp-controller="Home" asp-action="Shop" asp-route-searchString="Phi hư cấu" class="btn btn-sm text-muted px-3 py-1 rounded-pill text-decoration-none">Phi Hư Cấu</a>
+                <a asp-controller="Home" asp-action="Shop" asp-route-searchString="Triết" class="btn btn-sm text-muted px-3 py-1 rounded-pill text-decoration-none">Triết Lý</a>
             </div>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 reveal-stagger">
             @{
                 var dbBooks = ViewBag.BookList as List<Book>;
             }
@@ -319,7 +393,7 @@
 <!-- 4. PROMOTIONAL BANNER -->
 <section id="promotions" class="py-5">
     <div class="container px-4 px-lg-5">
-        <div class="p-4 p-md-5 rounded-4 position-relative overflow-hidden shadow-sm" style="background: linear-gradient(135deg, var(--bg-surface-high) 0%, var(--bg-surface-low) 100%); border: 1px solid rgba(222, 192, 183, 0.5);">
+        <div class="p-4 p-md-5 rounded-4 position-relative overflow-hidden shadow-sm reveal-on-scroll reveal-fade-up" style="background: linear-gradient(135deg, var(--bg-surface-high) 0%, var(--bg-surface-low) 100%); border: 1px solid rgba(222, 192, 183, 0.5);">
             <div class="row align-items-center g-4 position-relative" style="z-index: 2;">
                 <div class="col-lg-8">
                     <div class="d-inline-flex align-items-center gap-2 text-terracotta text-uppercase fw-bold small mb-2" style="letter-spacing: 0.12em;">
@@ -357,13 +431,13 @@
 <!-- 5. READER REVIEWS -->
 <section id="community" class="py-5 bg-surface-low">
     <div class="container px-4 px-lg-5">
-        <div class="text-center max-w-2xl mx-auto mb-5">
+        <div class="text-center max-w-2xl mx-auto mb-5 reveal-on-scroll">
             <span class="text-uppercase fw-bold text-sage small" style="letter-spacing: 0.12em;">Cộng Đồng Độc Giả</span>
             <h2 class="font-serif fw-bold text-dark mt-1">Cảm Nhận Từ Những Người Yêu Sách</h2>
             <p class="text-muted small">Hơn 45.000 cuốn sách đã được gửi gắm đến những góc đọc yên bình khắp mọi miền đất nước.</p>
         </div>
 
-        <div class="row g-4">
+        <div class="row g-4 reveal-stagger">
             <!-- Review 1 -->
             <div class="col-md-4">
                 <div class="testimonial-card">
@@ -433,9 +507,9 @@
 <!-- 6. THE BOOKSELLER'S PLEDGE -->
 <section class="py-5">
     <div class="container px-4 px-lg-5">
-        <div class="row g-4 text-center text-md-start">
+        <div class="row g-4 text-center text-md-start reveal-stagger">
             <div class="col-md-4">
-                <div class="p-4 bg-surface-low rounded-4 h-100">
+                <div class="p-4 bg-surface-low rounded-4 h-100 pledge-card">
                     <div class="category-icon-bubble bg-sage text-white mb-3">
                         <i class="bi bi-box-seam-fill"></i>
                     </div>
@@ -444,7 +518,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-4 bg-surface-low rounded-4 h-100">
+                <div class="p-4 bg-surface-low rounded-4 h-100 pledge-card">
                     <div class="category-icon-bubble bg-terracotta text-white mb-3">
                         <i class="bi bi-patch-check-fill"></i>
                     </div>
@@ -453,7 +527,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <div class="p-4 bg-surface-low rounded-4 h-100">
+                <div class="p-4 bg-surface-low rounded-4 h-100 pledge-card">
                     <div class="category-icon-bubble mb-3" style="background: var(--bg-surface-highest); color: var(--text-main);">
                         <i class="bi bi-chat-heart-fill"></i>
                     </div>

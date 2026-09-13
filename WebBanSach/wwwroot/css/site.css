@@ -196,13 +196,28 @@ h1, h2, h3, h4, h5, h6, .font-serif {
   transform: translateY(-2px);
 }
 
-/* Navigation & Glassmorphism */
-.navbar-glass {
-  background: rgba(255, 248, 244, 0.95) !important;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 14px rgba(43, 40, 37, 0.05);
-  border-bottom: 1px solid rgba(222, 192, 183, 0.4);
+/* Navigation & Dynamic Glassmorphism */
+.main-navbar.navbar-glass {
+  background: rgba(255, 248, 244, 0.8) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 1px 6px rgba(43, 40, 37, 0.03);
+  border-bottom: 1px solid rgba(222, 192, 183, 0.3);
+  transition: padding 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              box-shadow 0.3s ease,
+              backdrop-filter 0.3s ease,
+              border-bottom-color 0.3s ease;
+}
+
+.main-navbar.navbar-scrolled {
+  background: rgba(255, 248, 244, 0.92) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  box-shadow: 0 6px 24px rgba(43, 40, 37, 0.08);
+  border-bottom-color: rgba(200, 90, 50, 0.2) !important;
+  padding-top: 0.55rem !important;
+  padding-bottom: 0.55rem !important;
 }
 
 .nav-link {
@@ -438,4 +453,231 @@ thead.bg-light th {
   background-color: var(--bg-surface-low) !important;
   color: var(--text-muted) !important;
   border-color: rgba(222, 192, 183, 0.7) !important;
+}
+
+/* ===================================================
+   1. SCROLL PROGRESS BAR (Editorial Terracotta #C85A32)
+   =================================================== */
+.scroll-progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, #9f3c16 0%, #c85a32 60%, #e0744d 100%);
+  z-index: 1099;
+  box-shadow: 0 1px 8px rgba(200, 90, 50, 0.45);
+  pointer-events: none;
+  transition: width 0.08s cubic-bezier(0.1, 0.8, 0.3, 1);
+  will-change: width;
+}
+
+/* ===================================================
+   2. HERO PARALLAX & 3D FLOATING BOOK
+   =================================================== */
+.hero-parallax-stage {
+  perspective: 1200px;
+  position: relative;
+}
+
+.hero-ambient-circle {
+  border-radius: 50%;
+  will-change: transform;
+  pointer-events: none;
+  transition: transform 0.15s cubic-bezier(0.1, 0, 0, 1);
+}
+
+.hero-ambient-1 {
+  width: 440px;
+  height: 440px;
+  top: -30px;
+  right: -50px;
+  background: radial-gradient(circle, rgba(200, 90, 50, 0.18) 0%, rgba(200, 90, 50, 0) 70%);
+  filter: blur(65px);
+  z-index: 0;
+  animation: ambientDrift1 18s ease-in-out infinite alternate;
+}
+
+.hero-ambient-2 {
+  width: 380px;
+  height: 380px;
+  bottom: -40px;
+  left: -40px;
+  background: radial-gradient(circle, rgba(81, 99, 79, 0.16) 0%, rgba(81, 99, 79, 0) 70%);
+  filter: blur(75px);
+  z-index: 0;
+  animation: ambientDrift2 22s ease-in-out infinite alternate;
+}
+
+.hero-ambient-3 {
+  width: 280px;
+  height: 280px;
+  top: 35%;
+  left: 42%;
+  background: radial-gradient(circle, rgba(200, 90, 50, 0.09) 0%, rgba(200, 90, 50, 0) 70%);
+  filter: blur(55px);
+  z-index: 0;
+}
+
+@keyframes ambientDrift1 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-30px, 35px, 0) scale(1.08); }
+  100% { transform: translate3d(25px, -20px, 0) scale(0.96); }
+}
+
+@keyframes ambientDrift2 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(35px, -30px, 0) scale(1.12); }
+  100% { transform: translate3d(-20px, 25px, 0) scale(0.94); }
+}
+
+.hero-book-stage {
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
+
+.hero-book-3d {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
+  animation: bookSubtleFloat 6s ease-in-out infinite alternate;
+}
+
+@keyframes bookSubtleFloat {
+  0% {
+    transform: translateY(0px) rotateY(-5deg) rotateX(3deg);
+  }
+  100% {
+    transform: translateY(-14px) rotateY(3deg) rotateX(-2deg);
+  }
+}
+
+.hero-book-card {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+  box-shadow: 0 16px 42px rgba(43, 40, 37, 0.15) !important;
+}
+
+.hero-book-card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 24px 55px rgba(43, 40, 37, 0.22) !important;
+}
+
+.hero-floating-ribbon {
+  animation: ribbonPulse 3.5s ease-in-out infinite alternate;
+}
+
+@keyframes ribbonPulse {
+  0% { transform: translateY(-50%) scale(1); }
+  100% { transform: translateY(calc(-50% - 5px)) scale(1.04); }
+}
+
+/* ===================================================
+   3. SCROLL REVEAL & STAGGERED ANIMATION (60fps)
+   =================================================== */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translate3d(0, 26px, 0);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+.reveal-fade-up {
+  transform: translate3d(0, 36px, 0);
+}
+
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+.reveal-stagger.is-revealed > * {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Stagger delay cascade for up to 8 children */
+.reveal-stagger.is-revealed > *:nth-child(1) { transition-delay: 0ms; }
+.reveal-stagger.is-revealed > *:nth-child(2) { transition-delay: 90ms; }
+.reveal-stagger.is-revealed > *:nth-child(3) { transition-delay: 180ms; }
+.reveal-stagger.is-revealed > *:nth-child(4) { transition-delay: 270ms; }
+.reveal-stagger.is-revealed > *:nth-child(5) { transition-delay: 360ms; }
+.reveal-stagger.is-revealed > *:nth-child(6) { transition-delay: 450ms; }
+.reveal-stagger.is-revealed > *:nth-child(7) { transition-delay: 540ms; }
+.reveal-stagger.is-revealed > *:nth-child(8) { transition-delay: 630ms; }
+
+/* ===================================================
+   4. EDITORIAL MILESTONE STATS RIBBON
+   =================================================== */
+.stat-milestone-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s ease,
+              border-color 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-milestone-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--color-primary-accent), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.stat-milestone-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(43, 40, 37, 0.09) !important;
+  border-color: var(--color-primary-accent) !important;
+}
+
+.stat-milestone-card:hover::before {
+  opacity: 1;
+}
+
+.stat-counter {
+  letter-spacing: -0.02em;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* ===================================================
+   5. REDUCED MOTION (Accessibility)
+   =================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hero-ambient-circle,
+  .hero-book-3d,
+  .hero-floating-ribbon {
+    animation: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  .reveal-on-scroll,
+  .reveal-stagger > * {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .scroll-progress-bar {
+    transition: none !important;
+  }
+
+  .main-navbar {
+    transition: none !important;
+  }
 }
