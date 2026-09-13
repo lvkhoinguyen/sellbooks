@@ -1,0 +1,119 @@
+@model Book
+@{
+    ViewData["Title"] = "Xác Nhận Xóa Sách";
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Book" asp-action="Index" class="text-muted text-decoration-none">Quản Lý Sách</a>
+            </li>
+            <li class="breadcrumb-item active text-danger fw-semibold" aria-current="page">Xác Nhận Xóa</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(239, 68, 68, 0.25) !important; background-color: #ffffff;">
+                <div class="card-header bg-danger-subtle border-bottom py-3 px-4 d-flex align-items-center gap-3" style="border-color: rgba(239, 68, 68, 0.2) !important;">
+                    <div class="rounded-circle bg-white text-danger d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-trash-fill"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-serif fw-bold text-danger mb-0">Xác Nhận Xóa Cuốn Sách</h4>
+                        <small class="text-muted">Hành động này sẽ xóa dữ liệu sách và tệp ảnh bìa lưu trữ trong hệ thống</small>
+                    </div>
+                </div>
+
+                <div class="card-body p-4 bg-white">
+                    <div class="alert alert-warning border-0 rounded-3 d-flex align-items-center gap-3 p-3 mb-4" role="alert" style="background-color: #fff8eb;">
+                        <i class="bi bi-exclamation-triangle-fill text-warning fs-3"></i>
+                        <div class="small">
+                            <strong>Cảnh báo quan trọng:</strong> Khi xóa cuốn sách này, tất cả dữ liệu liên quan và tệp hình ảnh bìa vật lý lưu trong máy chủ sẽ bị xóa vĩnh viễn và không thể khôi phục.
+                        </div>
+                    </div>
+
+                    <!-- Book Information Summary -->
+                    <div class="row g-4 mb-4 align-items-center">
+                        <div class="col-sm-4 text-center">
+                            <div class="position-relative rounded-3 overflow-hidden shadow-sm border bg-surface-low d-inline-block" style="width: 140px; height: 190px; border-color: rgba(222, 192, 183, 0.5) !important;">
+                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                {
+                                    <img src="@Model.ImageUrl" alt="@Model.Title" class="w-100 h-100 object-fit-cover" />
+                                }
+                                else
+                                {
+                                    <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                                        <i class="bi bi-book fs-1 text-terracotta opacity-75"></i>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-sm-8">
+                            <h4 class="font-serif fw-bold text-dark mb-2">@Model.Title</h4>
+                            
+                            <div class="space-y-2 small">
+                                <div class="mb-2">
+                                    <span class="text-muted"><i class="bi bi-feather me-1 text-terracotta"></i> Tác giả:</span>
+                                    <span class="fw-semibold text-dark ms-1">@Model.Author</span>
+                                </div>
+                                <div class="mb-2">
+                                    <span class="text-muted"><i class="bi bi-bookmark-fill me-1 text-terracotta"></i> Danh mục:</span>
+                                    <span class="badge rounded-pill bg-surface-low text-terracotta border ms-1 px-3 py-1">
+                                        @(Model.Category?.Name ?? "Chưa phân loại")
+                                    </span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.ISBN))
+                                {
+                                    <div class="mb-2">
+                                        <span class="text-muted"><i class="bi bi-upc me-1 text-terracotta"></i> Mã ISBN:</span>
+                                        <span class="font-monospace ms-1 text-dark">@Model.ISBN</span>
+                                    </div>
+                                }
+                                <div class="mb-2">
+                                    <span class="text-muted"><i class="bi bi-tag me-1 text-terracotta"></i> Giá bán:</span>
+                                    <span class="fw-bold text-terracotta font-serif fs-6 ms-1">@Model.Price.ToString("#,##0") ₫</span>
+                                    <span class="text-decoration-line-through text-muted ms-1 small">(@Model.ListPrice.ToString("#,##0") ₫)</span>
+                                </div>
+                                <div>
+                                    <span class="text-muted"><i class="bi bi-box-seam me-1 text-terracotta"></i> Số lượng tồn kho:</span>
+                                    <span class="fw-semibold text-dark ms-1">@Model.StockQuantity cuốn</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <div class="bg-surface-low rounded-3 p-3 mb-4 small text-muted border" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                            <div class="fw-bold text-dark mb-1"><i class="bi bi-file-text me-1 text-terracotta"></i> Tóm tắt nội dung:</div>
+                            <p class="mb-0" style="max-height: 100px; overflow-y: auto;">@Model.Description</p>
+                        </div>
+                    }
+
+                    <!-- Delete Form -->
+                    <form method="post" asp-action="Delete">
+                        <input asp-for="Id" hidden />
+                        <div class="d-flex align-items-center gap-3 pt-3 border-top" style="border-color: rgba(222, 192, 183, 0.35) !important;">
+                            <button type="submit" class="btn btn-danger d-inline-flex align-items-center gap-2 rounded-pill px-4 py-2 shadow-sm">
+                                <i class="bi bi-trash-fill"></i>
+                                <span>Xác Nhận Xóa</span>
+                            </button>
+                            <a asp-controller="Book" asp-action="Index" class="btn btn-secondary rounded-pill px-4 py-2">
+                                <i class="bi bi-arrow-left me-1"></i> Hủy và quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

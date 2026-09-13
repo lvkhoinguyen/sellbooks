@@ -1,0 +1,276 @@
+@model IEnumerable<Book>
+@{
+    ViewData["Title"] = "Quản Lý Danh Sách Sách";
+    var totalBooks = Model?.Count() ?? 0;
+    var lowStockCount = Model?.Count(b => b.StockQuantity <= 5) ?? 0;
+    var totalInventoryValue = Model?.Sum(b => b.Price * b.StockQuantity) ?? 0;
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb & Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item">
+                        <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                            <i class="bi bi-house-door me-1"></i>Trang Chủ
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Quản Lý Sách</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                    <i class="bi bi-book-half"></i>
+                </span>
+                <div>
+                    <h2 class="font-serif fw-bold text-dark mb-0 fs-3">Quản Lý Ấn Phẩm & Sách</h2>
+                    <p class="text-muted small mb-0">Danh mục kho sách, cập nhật giá bán, hình ảnh bìa và số lượng tồn kho</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <a asp-controller="Category" asp-action="Index" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2 rounded-pill px-3 py-2">
+                <i class="bi bi-collection"></i>
+                <span>Xem Danh Mục</span>
+            </a>
+            <a asp-controller="Book" asp-action="Upsert" class="btn btn-terracotta d-inline-flex align-items-center gap-2 rounded-pill px-4 py-2 shadow-sm">
+                <i class="bi bi-plus-circle-fill fs-6"></i>
+                <span>Thêm Sách Mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-terracotta d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-journals"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tổng Đầu Sách</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">@totalBooks <small class="fs-6 fw-normal text-muted">tựa sách</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low @(lowStockCount > 0 ? "text-warning" : "text-sage") d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi @(lowStockCount > 0 ? "bi-exclamation-triangle-fill" : "bi-check2-circle")"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Cảnh Báo Tồn Kho</span>
+                    <h4 class="font-serif fw-bold @(lowStockCount > 0 ? "text-warning" : "text-sage") mb-0">
+                        @lowStockCount <small class="fs-6 fw-normal text-muted">cuốn sắp hết</small>
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-success d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tổng Giá Trị Tồn Kho</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">@totalInventoryValue.ToString("#,##0") <small class="fs-6 fw-normal text-muted">₫</small></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-table text-terracotta fs-5"></i>
+                <h5 class="font-serif fw-bold text-dark mb-0">Danh Sách Sách Trong Hệ Thống</h5>
+                <span class="badge rounded-pill bg-terracotta ms-2">@totalBooks</span>
+            </div>
+
+            <!-- Instant Search Box -->
+            <div style="min-width: 280px;">
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0 rounded-start-pill text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" id="bookSearchInput" class="form-control border-start-0 rounded-end-pill small" placeholder="Tìm theo tựa sách, tác giả, danh mục..." style="border-color: rgba(222, 192, 183, 0.7);" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" id="bookTable">
+                        <thead class="bg-surface-low text-muted small text-uppercase" style="letter-spacing: 0.04em; border-bottom: 1px solid rgba(222, 192, 183, 0.45);">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3" style="width: 80px;">Bìa Sách</th>
+                                <th scope="col" class="py-3">Tựa Sách &amp; ISBN</th>
+                                <th scope="col" class="py-3">Tác Giả</th>
+                                <th scope="col" class="py-3">Danh Mục</th>
+                                <th scope="col" class="py-3 text-end">Giá Niêm Yết</th>
+                                <th scope="col" class="py-3 text-end">Giá Ưu Đãi</th>
+                                <th scope="col" class="py-3 text-center">Tồn Kho</th>
+                                <th scope="col" class="pe-4 py-3 text-end" style="width: 160px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var book in Model)
+                            {
+                                var discountPercent = book.ListPrice > book.Price && book.ListPrice > 0 
+                                    ? Math.Round((1 - (book.Price / book.ListPrice)) * 100) 
+                                    : 0;
+
+                                <tr class="book-row">
+                                    <!-- Book Cover Thumbnail -->
+                                    <td class="ps-4 py-3">
+                                        <div class="position-relative rounded-3 overflow-hidden shadow-sm border bg-surface-low d-flex align-items-center justify-content-center" style="width: 58px; height: 78px; border-color: rgba(222, 192, 183, 0.5) !important;">
+                                            @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                            {
+                                                <img src="@book.ImageUrl" alt="@book.Title" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<i class=\'bi bi-book text-muted fs-4\'></i>';" />
+                                            }
+                                            else
+                                            {
+                                                <div class="text-center text-muted">
+                                                    <i class="bi bi-book fs-4 text-terracotta opacity-75"></i>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+
+                                    <!-- Title & ISBN -->
+                                    <td class="py-3">
+                                        <div class="fw-bold text-dark font-serif fs-6 title-col">@book.Title</div>
+                                        <div class="d-flex align-items-center gap-2 mt-1">
+                                            @if (!string.IsNullOrEmpty(book.ISBN))
+                                            {
+                                                <span class="badge bg-surface-low text-muted border small px-2 py-1 font-monospace" style="border-color: rgba(222, 192, 183, 0.7) !important;">
+                                                    <i class="bi bi-upc me-1 text-terracotta"></i>@book.ISBN
+                                                </span>
+                                            }
+                                            <small class="text-muted" style="font-size: 0.75rem;">
+                                                <i class="bi bi-calendar3 me-1"></i>@book.CreatedDate.ToString("dd/MM/yyyy")
+                                            </small>
+                                        </div>
+                                    </td>
+
+                                    <!-- Author -->
+                                    <td class="py-3">
+                                        <span class="d-inline-flex align-items-center gap-1 text-dark author-col">
+                                            <i class="bi bi-feather text-terracotta"></i>
+                                            <span class="fw-medium">@book.Author</span>
+                                        </span>
+                                    </td>
+
+                                    <!-- Category -->
+                                    <td class="py-3">
+                                        <span class="badge rounded-pill bg-surface-low text-terracotta border px-3 py-2 fw-semibold category-col" style="border-color: rgba(200, 90, 56, 0.25) !important;">
+                                            @(book.Category?.Name ?? "Chưa phân loại")
+                                        </span>
+                                    </td>
+
+                                    <!-- List Price -->
+                                    <td class="py-3 text-end text-muted">
+                                        <span class="text-decoration-line-through small">
+                                            @book.ListPrice.ToString("#,##0") ₫
+                                        </span>
+                                    </td>
+
+                                    <!-- Selling Price -->
+                                    <td class="py-3 text-end">
+                                        <div class="fw-bold text-terracotta font-serif fs-6">
+                                            @book.Price.ToString("#,##0") ₫
+                                        </div>
+                                        @if (discountPercent > 0)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger rounded-pill px-2 py-0 small fw-bold" style="font-size: 0.7rem;">
+                                                -@discountPercent%
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- Stock Quantity -->
+                                    <td class="py-3 text-center">
+                                        @if (book.StockQuantity <= 0)
+                                        {
+                                            <span class="badge rounded-pill bg-danger text-white px-2 py-1 small">Hết hàng (0)</span>
+                                        }
+                                        else if (book.StockQuantity <= 5)
+                                        {
+                                            <span class="badge rounded-pill bg-warning text-dark px-2 py-1 small">
+                                                <i class="bi bi-exclamation-circle me-1"></i>Còn @book.StockQuantity
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle px-3 py-1 fw-bold">
+                                                @book.StockQuantity
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="pe-4 py-3 text-end">
+                                        <div class="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+                                            <a asp-controller="Book" asp-action="Upsert" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary px-3" title="Chỉnh sửa sách">
+                                                <i class="bi bi-pencil-square me-1"></i>Sửa
+                                            </a>
+                                            <a asp-controller="Book" asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger px-3" title="Xóa sách">
+                                                <i class="bi bi-trash-fill me-1"></i>Xóa
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 px-4">
+                    <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center mb-3 shadow-sm" style="width: 76px; height: 76px; font-size: 2.2rem;">
+                        <i class="bi bi-journal-plus"></i>
+                    </div>
+                    <h4 class="font-serif fw-bold text-dark mb-2">Chưa có cuốn sách nào trong kho!</h4>
+                    <p class="text-muted small mb-4" style="max-width: 420px; margin: 0 auto;">
+                        Bắt đầu xây dựng tủ sách PageCraft của bạn bằng cách thêm tác phẩm văn học, triết học đầu tiên.
+                    </p>
+                    <a asp-controller="Book" asp-action="Upsert" class="btn btn-terracotta d-inline-flex align-items-center gap-2 rounded-pill px-4 py-2 shadow-sm">
+                        <i class="bi bi-plus-circle-fill"></i>
+                        <span>Thêm Cuốn Sách Đầu Tiên</span>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Client-side quick filter for Book rows
+        document.getElementById('bookSearchInput')?.addEventListener('input', function (e) {
+            const query = e.target.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#bookTable tbody tr.book-row');
+            
+            rows.forEach(row => {
+                const title = row.querySelector('.title-col')?.innerText.toLowerCase() || '';
+                const author = row.querySelector('.author-col')?.innerText.toLowerCase() || '';
+                const category = row.querySelector('.category-col')?.innerText.toLowerCase() || '';
+                
+                if (title.includes(query) || author.includes(query) || category.includes(query)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,234 @@
+@model BookVM
+@{
+    var isEdit = Model.Book.Id != 0;
+    ViewData["Title"] = isEdit ? "Cập Nhật Thông Tin Sách" : "Thêm Mới Sách Vào Kho";
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-controller="Book" asp-action="Index" class="text-muted text-decoration-none">Quản Lý Sách</a>
+            </li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">
+                @(isEdit ? "Cập Nhật Sách" : "Thêm Mới Sách")
+            </li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <div class="rounded-circle bg-white text-terracotta d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; font-size: 1.25rem; border: 1px solid rgba(222, 192, 183, 0.5);">
+                <i class="bi @(isEdit ? "bi-pencil-square" : "bi-journal-plus")"></i>
+            </div>
+            <div>
+                <h4 class="font-serif fw-bold text-dark mb-0">@(isEdit ? "Cập Nhật Thông Tin Ấn Phẩm" : "Thêm Cuốn Sách Mới Vào Kho")</h4>
+                <small class="text-muted">@(isEdit ? "Chỉnh sửa thông tin tựa sách, giá bán, ảnh bìa và lượng tồn kho" : "Điền đầy đủ thông tin bên dưới để bổ sung sách vào tủ sách PageCraft")</small>
+            </div>
+        </div>
+
+        <div class="card-body p-4 bg-white">
+            <form method="post" asp-action="Upsert" enctype="multipart/form-data">
+                <input asp-for="Book.Id" hidden />
+                <input asp-for="Book.ImageUrl" hidden />
+                <input asp-for="Book.CreatedDate" hidden />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 py-2 px-3 small mb-4" role="alert"></div>
+
+                <div class="row g-4">
+                    <!-- Left Column: Form Fields -->
+                    <div class="col-lg-8">
+                        <div class="row g-3">
+                            <!-- Title -->
+                            <div class="col-12">
+                                <label asp-for="Book.Title" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-book"></i>
+                                    </span>
+                                    <input asp-for="Book.Title" class="form-control rounded-end-3 p-3 bg-white text-dark" placeholder="Ví dụ: Chiến Tranh và Hòa Bình, Nhà Giả Kim..." style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                                <span asp-validation-for="Book.Title" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Author & Category -->
+                            <div class="col-md-6">
+                                <label asp-for="Book.Author" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-feather"></i>
+                                    </span>
+                                    <input asp-for="Book.Author" class="form-control rounded-end-3 p-3 bg-white text-dark" placeholder="Tên tác giả hoặc dịch giả..." style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                                <span asp-validation-for="Book.Author" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Book.CategoryId" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-bookmark-fill"></i>
+                                    </span>
+                                    <select asp-for="Book.CategoryId" asp-items="@Model.CategoryList" class="form-select rounded-end-3 p-3 bg-white text-dark" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <option disabled selected value="0">-- Chọn Thể Loại / Danh Mục --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Book.CategoryId" class="text-danger small"></span>
+                            </div>
+
+                            <!-- ISBN & Stock -->
+                            <div class="col-md-6">
+                                <label asp-for="Book.ISBN" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-upc-scan"></i>
+                                    </span>
+                                    <input asp-for="Book.ISBN" class="form-control rounded-end-3 p-3 bg-white text-dark font-monospace" placeholder="Mã ISBN (VD: 978-604-56-1234-5)" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                                <span asp-validation-for="Book.ISBN" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Book.StockQuantity" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-box-seam"></i>
+                                    </span>
+                                    <input asp-for="Book.StockQuantity" type="number" min="0" class="form-control rounded-end-3 p-3 bg-white text-dark" placeholder="Số lượng trong kho (VD: 50)" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                                <span asp-validation-for="Book.StockQuantity" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Pricing: ListPrice & Price -->
+                            <div class="col-md-6">
+                                <label asp-for="Book.ListPrice" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-tag"></i>
+                                    </span>
+                                    <input asp-for="Book.ListPrice" type="number" step="1000" class="form-control rounded-end-3 p-3 bg-white text-dark" placeholder="Giá niêm yết bìa (VD: 150000)" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                    <span class="input-group-text bg-surface-low border-start-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">₫</span>
+                                </div>
+                                <span asp-validation-for="Book.ListPrice" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Book.Price" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">
+                                        <i class="bi bi-percent text-terracotta"></i>
+                                    </span>
+                                    <input asp-for="Book.Price" type="number" step="1000" class="form-control rounded-end-3 p-3 bg-white text-dark fw-bold text-terracotta" placeholder="Giá bán ưu đãi (VD: 120000)" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                    <span class="input-group-text bg-surface-low border-start-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);">₫</span>
+                                </div>
+                                <span asp-validation-for="Book.Price" class="text-danger small"></span>
+                                <small class="text-muted" style="font-size: 0.75rem;">Giá bán ưu đãi phải nhỏ hơn hoặc bằng giá niêm yết</small>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                <label asp-for="Book.Description" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
+                                <textarea asp-for="Book.Description" rows="5" class="form-control rounded-3 p-3 bg-white text-dark" placeholder="Tóm tắt tác phẩm, trích dẫn nổi bật hoặc đánh giá biên tập..." style="border: 1px solid rgba(222, 192, 183, 0.7);"></textarea>
+                                <span asp-validation-for="Book.Description" class="text-danger small"></span>
+                            </div>
+
+                            <!-- Cover Image Upload Input -->
+                            <div class="col-12">
+                                <label class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                                    Tải Lên Bìa Sách <span class="text-muted fw-normal">(JPG, PNG, WEBP)</span>
+                                </label>
+                                <input type="file" name="file" id="uploadBox" class="form-control rounded-3 p-3 bg-white text-dark" accept="image/*" style="border: 1px dashed rgba(222, 192, 183, 0.9);" />
+                                <small class="text-muted mt-1 d-block" style="font-size: 0.75rem;">
+                                    @(isEdit ? "Để trống nếu bạn muốn giữ nguyên hình ảnh bìa hiện tại." : "Chọn một ảnh bìa sắc nét để hiển thị trên cửa hàng.")
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex align-items-center gap-3 pt-4 mt-4 border-top" style="border-color: rgba(222, 192, 183, 0.35) !important;">
+                            <button type="submit" class="btn btn-terracotta d-inline-flex align-items-center gap-2 rounded-pill px-4 py-2 shadow-sm">
+                                <i class="bi @(isEdit ? "bi-check2-circle" : "bi-plus-circle-fill")"></i>
+                                <span>@(isEdit ? "Lưu Thay Đổi" : "Thêm Sách Vào Kho")</span>
+                            </button>
+                            <a asp-controller="Book" asp-action="Index" class="btn btn-secondary rounded-pill px-4 py-2">
+                                <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Live Book Cover Preview -->
+                    <div class="col-lg-4">
+                        <div class="p-3 bg-surface-low rounded-4 border sticky-top" style="top: 100px; border-color: rgba(222, 192, 183, 0.5) !important;">
+                            <h6 class="font-serif fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+                                <i class="bi bi-image text-terracotta"></i>
+                                <span>Xem Trước Bìa Sách</span>
+                            </h6>
+
+                            <div class="position-relative rounded-4 overflow-hidden shadow-sm border bg-white d-flex align-items-center justify-content-center text-center p-2 mb-3" style="min-height: 320px; border-color: rgba(222, 192, 183, 0.6) !important;">
+                                @if (!string.IsNullOrEmpty(Model.Book.ImageUrl))
+                                {
+                                    <img src="@Model.Book.ImageUrl" id="imagePreview" alt="Bìa sách" class="img-fluid rounded-3 object-fit-contain w-100" style="max-height: 340px;" />
+                                    <div id="imagePlaceholder" style="display: none;">
+                                        <i class="bi bi-file-earmark-image fs-1 text-muted"></i>
+                                        <p class="text-muted small mt-2 mb-0">Chưa có ảnh bìa</p>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <img src="" id="imagePreview" alt="Bìa sách" class="img-fluid rounded-3 object-fit-contain w-100" style="max-height: 340px; display: none;" />
+                                    <div id="imagePlaceholder" class="p-4">
+                                        <div class="rounded-circle bg-white text-terracotta d-inline-flex align-items-center justify-content-center shadow-sm mb-3" style="width: 60px; height: 60px; font-size: 1.8rem; border: 1px solid rgba(222, 192, 183, 0.5);">
+                                            <i class="bi bi-book-half"></i>
+                                        </div>
+                                        <p class="fw-semibold text-dark mb-1">Chưa tải lên ảnh</p>
+                                        <p class="text-muted small mb-0" style="font-size: 0.8rem;">Ảnh bìa xem trước sẽ hiển thị tại đây sau khi bạn chọn file từ máy tính.</p>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="bg-white rounded-3 p-3 border small text-muted" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                                <div class="fw-bold text-dark mb-1"><i class="bi bi-info-circle me-1 text-terracotta"></i> Gợi ý định dạng:</div>
+                                <ul class="mb-0 ps-3 space-y-1">
+                                    <li>Tỷ lệ khuyến nghị: <strong>2:3</strong> hoặc <strong>3:4</strong> (chiều dọc).</li>
+                                    <li>Kích thước tối thiểu: 400 × 600 px.</li>
+                                    <li>Dung lượng tối đa: 5MB.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        // Live image preview when user selects a file
+        document.getElementById('uploadBox').addEventListener('change', function (e) {
+            const preview = document.getElementById('imagePreview');
+            const placeholder = document.getElementById('imagePlaceholder');
+
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    preview.src = evt.target.result;
+                    preview.style.display = 'block';
+                    if (placeholder) {
+                        placeholder.style.display = 'none';
+                    }
+                };
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    </script>
+}

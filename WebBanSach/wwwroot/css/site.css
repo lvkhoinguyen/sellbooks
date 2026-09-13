@@ -30,6 +30,14 @@
   --bs-border-color: rgba(222, 192, 183, 0.5);
   --bs-card-bg: #ffffff;
   --bs-card-color: #1e1b18;
+  --bs-light: #faf2ed;
+  --bs-light-rgb: 250, 242, 237;
+  --bs-light-text-emphasis: #57423b;
+  --bs-light-bg-subtle: #faf2ed;
+  --bs-light-border-subtle: #dec0b7;
+  --bs-breadcrumb-bg: transparent;
+  --bs-breadcrumb-divider-color: #dec0b7;
+  --bs-breadcrumb-item-active-color: #c85a32;
 }
 
 html {
@@ -356,4 +364,78 @@ h1, h2, h3, h4, h5, h6, .font-serif {
 
 .site-footer a:hover {
   color: var(--color-primary-accent);
+}
+
+/* ==========================================
+   Breadcrumb Styling - Editorial PageCraft Theme
+   Neutralizing Bootswatch Darkly dark background
+   ========================================== */
+.breadcrumb {
+  background: transparent !important;
+  background-color: transparent !important;
+  padding: 0 !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 0.85rem;
+}
+
+.breadcrumb-item {
+  color: var(--text-muted) !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.breadcrumb-item a {
+  color: var(--text-muted) !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease-in-out;
+}
+
+.breadcrumb-item a:hover {
+  color: var(--color-primary-accent) !important;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+  color: var(--border-subtle) !important;
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
+}
+
+.breadcrumb-item.active {
+  color: var(--color-primary-accent) !important;
+  font-weight: 600;
+}
+
+.breadcrumb-item.active.text-danger {
+  color: #dc3545 !important;
+}
+
+/* ==========================================
+   Light Background & Badge Neutralization
+   Override Bootswatch Darkly dark #222 background
+   ========================================== */
+.bg-light,
+[data-bs-theme="light"] .bg-light {
+  background-color: var(--bg-surface-low) !important;
+  color: var(--text-muted) !important;
+}
+
+.badge.bg-light,
+.badge.bg-surface-low {
+  background-color: var(--bg-surface-low) !important;
+  color: var(--text-muted) !important;
+  border: 1px solid rgba(222, 192, 183, 0.6) !important;
+  font-weight: 500;
+}
+
+thead.bg-light,
+thead.bg-light th {
+  background-color: var(--bg-surface-low) !important;
+  color: var(--text-muted) !important;
+}
+
+.input-group-text.bg-light,
+.input-group-text {
+  background-color: var(--bg-surface-low) !important;
+  color: var(--text-muted) !important;
+  border-color: rgba(222, 192, 183, 0.7) !important;
 }

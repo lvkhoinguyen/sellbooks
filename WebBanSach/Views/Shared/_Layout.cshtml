@@ -52,6 +52,9 @@
                             <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Quản Lý Danh Mục</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Book" asp-action="Index">Quản Lý Sách</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#bestsellers">Sách Bán Chạy</a>
                         </li>
                         <li class="nav-item">
@@ -95,6 +98,7 @@
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="dropdownUser">
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Tài khoản</a></li>
+                                <li><a class="dropdown-item" asp-controller="Book" asp-action="Index"><i class="bi bi-book me-2"></i>Quản trị sách</a></li>
                                 <li><a class="dropdown-item" asp-controller="Category" asp-action="Index"><i class="bi bi-sliders me-2"></i>Quản trị danh mục</a></li>
                                 <li><a class="dropdown-item" href="#"><i class="bi bi-heart me-2"></i>Sách yêu thích</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -141,6 +145,7 @@
                 <div class="col-lg-2 col-md-6">
                     <h6>Khám Phá Nhanh</h6>
                     <ul class="list-unstyled small space-y-2 mb-0">
+                        <li class="mb-2"><a asp-controller="Book" asp-action="Index">Tất Cả Sách</a></li>
                         <li class="mb-2"><a href="#bestsellers">Sách Bán Chạy</a></li>
                         <li class="mb-2"><a asp-controller="Category" asp-action="Index">Danh Mục Thể Loại</a></li>
                         <li class="mb-2"><a href="#featured">Tác Phẩm Mới</a></li>
