@@ -1,14 +1,23 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using WebBanSach.Data;
 using WebBanSach.Models;
 
 namespace WebBanSach.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ApplicationDbContext _db;
+
+        public HomeController(ApplicationDbContext db)
+        {
+            _db = db;
+        }
+
         public IActionResult Index()
         {
-            return View();
+            List<Category> categoryList = _db.Categories.OrderBy(c => c.DisplayOrder).ToList();
+            return View(categoryList);
         }
 
         public IActionResult Privacy()

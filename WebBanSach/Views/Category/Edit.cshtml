@@ -1,6 +1,6 @@
 @model Category
 @{
-    ViewData["Title"] = "Thêm Danh Mục Mới";
+    ViewData["Title"] = "Chỉnh Sửa Danh Mục";
 }
 
 <div class="container px-4 px-lg-5 py-4">
@@ -9,7 +9,7 @@
         <ol class="breadcrumb mb-0 small">
             <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none"><i class="bi bi-house-door me-1"></i>Trang Chủ</a></li>
             <li class="breadcrumb-item"><a asp-controller="Category" asp-action="Index" class="text-muted text-decoration-none">Danh Mục Sách</a></li>
-            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Thêm Mới</li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Chỉnh Sửa #@Model.Id</li>
         </ol>
     </nav>
 
@@ -18,34 +18,37 @@
             <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
                 <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.4) !important;">
                     <div class="rounded-circle bg-white text-terracotta d-flex align-items-center justify-content-center shadow-sm" style="width: 44px; height: 44px; font-size: 1.2rem; border: 1px solid rgba(222, 192, 183, 0.5);">
-                        <i class="bi bi-folder-plus"></i>
+                        <i class="bi bi-pencil-square"></i>
                     </div>
                     <div>
-                        <h4 class="font-serif fw-bold text-dark mb-0">Tạo Mới Danh Mục Sách</h4>
-                        <small class="text-muted">Nhập thông tin danh mục thể loại sách mới vào hệ thống</small>
+                        <h4 class="font-serif fw-bold text-dark mb-0">Chỉnh Sửa Danh Mục</h4>
+                        <small class="text-muted">Cập nhật thông tin danh mục #@Model.Id (@Model.Name)</small>
                     </div>
                 </div>
 
                 <div class="card-body p-4 bg-white">
                     <form method="post">
+                        <input asp-for="Id" hidden />
+                        <input asp-for="CreatedDateTime" hidden />
+
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
-                            <input asp-for="Name" class="form-control rounded-3 p-3 bg-white text-dark" placeholder="Nhập tên thể loại (ví dụ: Văn Học Cổ Điển, Triết Học, Trinh Thám...)" style="border: 1px solid rgba(222, 192, 183, 0.7);" />
+                            <input asp-for="Name" class="form-control rounded-3 p-3 bg-white text-dark" placeholder="Nhập tên danh mục..." style="border: 1px solid rgba(222, 192, 183, 0.7);" />
                             <span asp-validation-for="Name" class="text-danger small"></span>
                         </div>
 
                         <div class="mb-4">
                             <label asp-for="DisplayOrder" class="form-label fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;"></label>
-                            <input asp-for="DisplayOrder" class="form-control rounded-3 p-3 bg-white text-dark" placeholder="Nhập số thứ tự hiển thị (1 - 100)..." style="border: 1px solid rgba(222, 192, 183, 0.7);" />
+                            <input asp-for="DisplayOrder" class="form-control rounded-3 p-3 bg-white text-dark" placeholder="Nhập thứ tự (1 - 100)..." style="border: 1px solid rgba(222, 192, 183, 0.7);" />
                             <span asp-validation-for="DisplayOrder" class="text-danger small"></span>
                         </div>
 
                         <div class="d-flex align-items-center gap-3 pt-3 border-top" style="border-color: rgba(222, 192, 183, 0.35) !important;">
                             <button type="submit" class="btn btn-terracotta d-inline-flex align-items-center gap-2">
                                 <i class="bi bi-check-circle-fill"></i>
-                                <span>Tạo Danh Mục</span>
+                                <span>Cập Nhật Thay Đổi</span>
                             </button>
                             <a asp-controller="Category" asp-action="Index" class="btn btn-secondary rounded-pill px-4">
                                 <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách

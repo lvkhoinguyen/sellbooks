@@ -1,52 +1,194 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WebBanSach</title>
+    <title>@ViewData["Title"] - PageCraft Booksellers</title>
+    <!-- Google Fonts: Playfair Display (Serif) & Plus Jakarta Sans (Sans-serif) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap & Icons -->
     <link rel="stylesheet" href="~/css/bootstrap.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WebBanSach.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-primary border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebBanSach</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <!-- Top Announcement Bar -->
+    <div class="py-2 text-center text-white small fw-medium" style="background-color: var(--color-primary); letter-spacing: 0.03em;">
+        <span><i class="bi bi-gift-fill me-1"></i> Đóng gói quà tặng miễn phí &amp; Giao hàng toàn quốc cho đơn từ 250.000₫ • Nhà sách độc lập từ 2018</span>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="sticky-top">
+        <nav class="navbar navbar-expand-lg navbar-glass py-3">
+            <div class="container-fluid px-lg-5">
+                <!-- Brand / Logo -->
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-area="" asp-controller="Home" asp-action="Index">
+                    <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-terracotta text-white" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                        <i class="bi bi-book-half"></i>
+                    </span>
+                    <div>
+                        <span class="fw-bold fs-4 text-dark font-serif d-block" style="line-height: 1.1;">PageCraft</span>
+                        <small class="text-muted text-uppercase" style="font-size: 0.65rem; letter-spacing: 0.12em;">Literary Booksellers</small>
+                    </div>
+                </a>
+
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <!-- Nav Links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Trang Chủ</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Category</a>
+                            <a class="nav-link" asp-area="" asp-controller="Category" asp-action="Index">Quản Lý Danh Mục</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            <a class="nav-link" href="#bestsellers">Sách Bán Chạy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#promotions">Ưu Đãi Mùa Này</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#community">Góc Độc Giả</a>
                         </li>
                     </ul>
+
+                    <!-- Search Bar -->
+                    <div class="d-none d-xl-flex me-3">
+                        <div class="search-pill">
+                            <span class="material-symbols-outlined text-muted fs-5 me-2">search</span>
+                            <input type="text" placeholder="Tìm tựa sách, tác giả..." />
+                        </div>
+                    </div>
+
+                    <!-- User Actions: Wishlist, Cart, Profile -->
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-sm rounded-circle p-2 text-muted hover-bg" title="Yêu thích">
+                            <span class="position-relative d-inline-block">
+                                <i class="bi bi-heart fs-5"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-sage" style="font-size: 0.65rem;">3</span>
+                            </span>
+                        </button>
+
+                        <button class="btn btn-sm d-flex align-items-center gap-2 rounded-pill px-3 py-2 bg-surface-low border" style="border-color: var(--border-subtle) !important;" title="Giỏ hàng">
+                            <span class="position-relative d-inline-block">
+                                <i class="bi bi-bag fs-5 text-terracotta"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-terracotta" style="font-size: 0.65rem;">2</span>
+                            </span>
+                            <span class="d-none d-sm-inline fw-semibold small">Giỏ Hàng</span>
+                        </button>
+
+                        <div class="dropdown ms-2">
+                            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser" data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 38px; height: 38px;">
+                                    <i class="bi bi-person-fill fs-5"></i>
+                                </div>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end shadow border-0" aria-labelledby="dropdownUser">
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Tài khoản</a></li>
+                                <li><a class="dropdown-item" asp-controller="Category" asp-action="Index"><i class="bi bi-sliders me-2"></i>Quản trị danh mục</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="bi bi-heart me-2"></i>Sách yêu thích</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Đăng xuất</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            <partial name="_Notification" />
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - WebBanSach - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="pb-5">
+        <partial name="_Notification" />
+        @RenderBody()
+    </main>
+
+    <!-- Rich Editorial Footer -->
+    <footer class="site-footer pt-5 pb-4">
+        <div class="container px-4 px-lg-5">
+            <div class="row g-4 pb-4">
+                <!-- Column 1: Brand & Address -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center" style="width: 34px; height: 34px;">
+                            <i class="bi bi-book-half"></i>
+                        </span>
+                        <span class="fw-bold fs-4 text-dark font-serif">PageCraft</span>
+                    </div>
+                    <p class="text-muted small pe-lg-4 mb-3">
+                        PageCraft — Tuyển tập những áng văn xúc động, triết học trường tồn và tác phẩm kinh điển dành cho tâm hồn yêu sách.
+                    </p>
+                    <div class="d-flex align-items-start gap-2 small text-muted">
+                        <i class="bi bi-geo-alt-fill text-terracotta mt-1"></i>
+                        <span>742 Botanical Way, Suite 4, Q.1, TP. Hồ Chí Minh</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 small text-muted mt-2">
+                        <i class="bi bi-telephone-fill text-terracotta"></i>
+                        <span>+84 (028) 3822 9999</span>
+                    </div>
+                </div>
+
+                <!-- Column 2: Quick Explore -->
+                <div class="col-lg-2 col-md-6">
+                    <h6>Khám Phá Nhanh</h6>
+                    <ul class="list-unstyled small space-y-2 mb-0">
+                        <li class="mb-2"><a href="#bestsellers">Sách Bán Chạy</a></li>
+                        <li class="mb-2"><a asp-controller="Category" asp-action="Index">Danh Mục Thể Loại</a></li>
+                        <li class="mb-2"><a href="#featured">Tác Phẩm Mới</a></li>
+                        <li class="mb-2"><a href="#">Tuyển Chọn Biên Tập</a></li>
+                        <li class="mb-2"><a href="#">Bản Ký Độc Quyền</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Customer Care -->
+                <div class="col-lg-2 col-md-6">
+                    <h6>Dịch Vụ Khách Hàng</h6>
+                    <ul class="list-unstyled small space-y-2 mb-0">
+                        <li class="mb-2"><a href="#">Chính Sách Giao Hàng</a></li>
+                        <li class="mb-2"><a href="#">Tra Cứu Đơn Hàng</a></li>
+                        <li class="mb-2"><a href="#">Chính Sách Đổi Trả</a></li>
+                        <li class="mb-2"><a href="#">Tư Vấn Chọn Sách</a></li>
+                        <li class="mb-2"><a href="#">Thẻ Quà Tặng</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Newsletter -->
+                <div class="col-lg-4 col-md-6">
+                    <h6>Hội Đọc Sách The Reader's Guild</h6>
+                    <p class="small text-muted mb-3">
+                        Đăng ký nhận thư báo văn chương hàng tuần, gợi ý tác phẩm chọn lọc và nhận ngay mã giảm giá <strong>10%</strong> cho đơn hàng đầu tiên.
+                    </p>
+                    <form class="d-flex gap-2">
+                        <input type="email" class="form-control rounded-pill px-3 py-2 small" placeholder="Email của bạn..." style="background: #ffffff; border-color: var(--border-subtle);" />
+                        <button type="button" class="btn btn-terracotta text-nowrap">Đăng Ký</button>
+                    </form>
+                </div>
+            </div>
+
+            <hr style="border-color: rgba(222, 192, 183, 0.4);" />
+
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center pt-2 small text-muted">
+                <p class="mb-2 mb-md-0">&copy; 2026 PageCraft Booksellers LLC. Bảo lưu mọi quyền.</p>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="#" class="text-muted"><i class="bi bi-facebook fs-5"></i></a>
+                    <a href="#" class="text-muted"><i class="bi bi-instagram fs-5"></i></a>
+                    <a href="#" class="text-muted"><i class="bi bi-tiktok fs-5"></i></a>
+                    <a href="#" class="text-muted"><i class="bi bi-youtube fs-5"></i></a>
+                </div>
+            </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -1,33 +1,156 @@
 @model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Quản Lý Danh Mục Sách";
+}
 
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">Category List</h2>
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb & Page Heading -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none"><i class="bi bi-house-door me-1"></i>Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Danh Mục Sách</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 46px; height: 46px; font-size: 1.3rem;">
+                    <i class="bi bi-bookmark-star-fill"></i>
+                </span>
+                <div>
+                    <h2 class="font-serif fw-bold text-dark mb-0 fs-3">Quản Lý Danh Mục Sách</h2>
+                    <p class="text-muted small mb-0">Hệ thống phân loại các thể loại ấn phẩm trong nhà sách PageCraft</p>
+                </div>
+            </div>
         </div>
-        <div class="col-6 text-end">
-            <a asp-controller="Category" asp-action="Create" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> &nbsp; Create New Category
+
+        <div>
+            <a asp-controller="Category" asp-action="Create" class="btn btn-terracotta d-inline-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-plus-circle-fill fs-6"></i>
+                <span>Thêm Danh Mục Mới</span>
             </a>
         </div>
     </div>
-    <br /><br />
 
-    <table class="table table-bordered table-striped" style="width:100%">
-        <thead>
-            <tr>
-                <th>Category Name</th>
-                <th>Display Order</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td width="50%">@item.Name</td>
-                    <td width="50%">@item.DisplayOrder</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-terracotta d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-collection-fill"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tổng Thể Loại</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">@(Model?.Count() ?? 0) <small class="fs-6 fw-normal text-muted">danh mục</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-sage d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Trạng Thái Kho</span>
+                    <h4 class="font-serif fw-bold text-sage mb-0">Hoạt Động Tốt</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-muted d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-sort-numeric-down"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Sắp Xếp Hiển Thị</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">Theo Thứ Tự</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <span class="fw-bold text-dark font-serif fs-5 mb-0">Danh Sách Thể Loại Hiện Có</span>
+            <span class="badge rounded-pill bg-white text-muted border px-3 py-2 small" style="border-color: rgba(222, 192, 183, 0.6) !important;">
+                Cập nhật tự động
+            </span>
+        </div>
+
+        <div class="card-body p-0 bg-white">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="background-color: #ffffff;">
+                    <thead style="background-color: var(--bg-surface-low);">
+                        <tr>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 12%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Mã ID</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 44%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Tên Danh Mục Sách</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 22%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Thứ Tự Ưu Tiên</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase text-end" style="width: 22%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: #ffffff;">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="py-3 px-4 fw-bold text-muted" style="background-color: #ffffff;">
+                                        <span class="badge rounded-pill bg-surface-low text-muted px-2 py-1 border" style="border-color: rgba(222, 192, 183, 0.5) !important;">#@item.Id</span>
+                                    </td>
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-3 bg-surface-low text-terracotta d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                                                <i class="bi bi-folder-fill fs-6"></i>
+                                            </div>
+                                            <div>
+                                                <span class="fw-bold text-dark fs-6 d-block">@item.Name</span>
+                                                <small class="text-muted">ID: @item.Id • Tác phẩm thuộc thể loại này</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <span class="badge rounded-pill px-3 py-2 fw-semibold" style="background: rgba(81, 99, 79, 0.1); color: var(--color-secondary); border: 1px solid rgba(81, 99, 79, 0.25);">
+                                            <i class="bi bi-sort-numeric-down me-1"></i>Thứ tự: @item.DisplayOrder
+                                        </span>
+                                    </td>
+                                    <td class="py-3 px-4 text-end" style="background-color: #ffffff;">
+                                        <div class="d-inline-flex align-items-center gap-2">
+                                            <a asp-controller="Category" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-terracotta d-inline-flex align-items-center gap-1 shadow-none">
+                                                <i class="bi bi-pencil-square"></i>
+                                                <span>Sửa</span>
+                                            </a>
+                                            <a asp-controller="Category" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm rounded-pill px-3 d-inline-flex align-items-center gap-1 text-decoration-none shadow-none" style="background-color: rgba(200, 30, 30, 0.08); color: #c00; border: 1px solid rgba(200, 30, 30, 0.25);">
+                                                <i class="bi bi-trash3"></i>
+                                                <span>Xóa</span>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center py-5 bg-white">
+                                    <div class="py-4">
+                                        <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                            <i class="bi bi-inbox fs-2 opacity-75"></i>
+                                        </div>
+                                        <h5 class="font-serif fw-bold text-dark mb-1">Chưa có danh mục nào</h5>
+                                        <p class="text-muted small mb-3">Hiện tại kho sách chưa có thể loại nào được khởi tạo.</p>
+                                        <a asp-controller="Category" asp-action="Create" class="btn btn-sm btn-terracotta">
+                                            <i class="bi bi-plus-circle me-1"></i> Tạo danh mục đầu tiên
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

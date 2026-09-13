@@ -1,8 +1,453 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "Trang Chủ - Nhà Sách Độc Lập PageCraft";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- 1. HERO SECTION -->
+<section class="py-5 position-relative overflow-hidden">
+    <!-- Ambient Blur Background Elements -->
+    <div class="position-absolute top-0 end-0 rounded-circle pointer-events-none" style="width: 420px; height: 420px; background: rgba(200, 90, 50, 0.08); filter: blur(90px); z-index: 0;"></div>
+    <div class="position-absolute bottom-0 start-0 rounded-circle pointer-events-none" style="width: 350px; height: 350px; background: rgba(81, 99, 79, 0.08); filter: blur(80px); z-index: 0;"></div>
+
+    <div class="container px-4 px-lg-5 position-relative" style="z-index: 1;">
+        <div class="row align-items-center g-5">
+            <!-- Left Editorial Text -->
+            <div class="col-lg-7 text-start">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-4" style="background: var(--bg-surface-high);">
+                    <span class="rounded-circle bg-terracotta d-inline-block" style="width: 8px; height: 8px;"></span>
+                    <span class="text-uppercase fw-bold small text-terracotta" style="font-size: 0.75rem; letter-spacing: 0.12em;">Tuyển Chọn Nổi Bật • Mùa Thu 2026</span>
+                </div>
+
+                <h1 class="display-4 fw-bold mb-4 text-dark font-serif" style="line-height: 1.15;">
+                    Những Câu Chuyện <span class="fst-italic fw-normal text-terracotta">Đọng Lại</span> Cùng Năm Tháng.
+                </h1>
+
+                <p class="lead text-muted mb-4 pe-lg-5" style="line-height: 1.7; font-size: 1.1rem;">
+                    Tuyển tập tác phẩm văn học sâu sắc, triết luận trường tồn và sách nghệ thuật dành cho độc giả tinh tế. Mỗi ấn bản đều được lựa chọn với sự trân quý tuyệt đối đối với từng trang sách in.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+                    <a href="#bestsellers" class="btn btn-terracotta d-inline-flex align-items-center gap-2">
+                        <span>Khám Phá Sách Hay</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a asp-controller="Category" asp-action="Index" class="btn btn-outline-terracotta d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-bookmarks"></i>
+                        <span>Xem Toàn Bộ Thể Loại</span>
+                    </a>
+                </div>
+
+                <!-- Social Proof -->
+                <div class="d-inline-flex align-items-center gap-3 p-2 px-3 rounded-pill bg-white shadow-sm border border-light">
+                    <div class="text-warning d-flex">
+                        <i class="bi bi-star-fill text-terracotta"></i>
+                        <i class="bi bi-star-fill text-terracotta ms-1"></i>
+                        <i class="bi bi-star-fill text-terracotta ms-1"></i>
+                        <i class="bi bi-star-fill text-terracotta ms-1"></i>
+                        <i class="bi bi-star-fill text-terracotta ms-1"></i>
+                    </div>
+                    <span class="small text-muted">
+                        <strong class="text-dark">4.9/5</strong> từ hơn 12.000 độc giả thân thiết
+                    </span>
+                </div>
+            </div>
+
+            <!-- Right 3D Book Showcase -->
+            <div class="col-lg-5 text-center">
+                <div class="position-relative d-inline-block mx-auto" style="max-width: 360px;">
+                    <!-- Ribbon -->
+                    <div class="position-absolute top-0 end-0 translate-middle-y me-3 bg-sage text-white px-3 py-1 rounded-pill shadow-sm small fw-bold text-uppercase d-flex align-items-center gap-1" style="z-index: 3; letter-spacing: 0.08em; font-size: 0.72rem;">
+                        <i class="bi bi-stars"></i>
+                        <span>Sách Tiêu Biểu • Tháng 10</span>
+                    </div>
+
+                    <!-- Book Card Container -->
+                    <div class="bg-white p-4 rounded-4 shadow-lg text-start position-relative" style="z-index: 2; border: 1px solid rgba(222, 192, 183, 0.4);">
+                        <div class="book-cover-container mb-3" style="aspect-ratio: 3/4;">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfB6zfERYPybvsHk6_001w9XriafDx-0J6zio3sU9CJg0tcsYs5D0spPza8S2p7E8Y6LONHvD-kX012pcPXJzh38ETdJMWvIdRx6lQsSt5gvnMmdl_AMhC5mxJEphT25QAhBGsA-Cu-B_ta3m9swZcMwkNYh-gdrnjUPRQ6Knxde2uQN0OvLxM6USncHpbV5Jfm2OMVglg_cehHPFlf-61jFqWwzsxrbCi9LAELl38QNCwW02vFk" 
+                                 alt="The Echoes of Autumn" class="w-100 h-100 object-fit-cover" />
+                            <div class="book-spine-crease"></div>
+                        </div>
+
+                        <div class="p-3 rounded-3 bg-surface-low d-flex align-items-center justify-content-between">
+                            <div>
+                                <h5 class="font-serif fw-bold mb-1 fs-6 text-dark">The Echoes of Autumn</h5>
+                                <p class="small text-muted mb-0">Tác giả Eliza J. Harrison • <span class="text-sage fw-semibold">Bìa cứng</span></p>
+                            </div>
+                            <div class="text-end">
+                                <div class="fw-bold text-terracotta fs-5">245.000₫</div>
+                                <small class="text-muted text-decoration-line-through">295.000₫</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 2. CURATED CATEGORIES SECTION -->
+<section id="categories" class="py-5 bg-surface-low border-top border-bottom" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+    <div class="container px-4 px-lg-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-2">
+            <div>
+                <span class="text-uppercase fw-bold text-terracotta small" style="letter-spacing: 0.12em;">Không Gian Đọc Sách</span>
+                <h2 class="font-serif fw-bold text-dark mb-0">Khám Phá Theo Cảm Hứng</h2>
+            </div>
+            <a asp-controller="Category" asp-action="Index" class="text-terracotta text-decoration-none fw-semibold d-inline-flex align-items-center gap-1">
+                <span>Quản Lý Tất Cả Danh Mục</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-3">
+            @if (Model != null && Model.Any())
+            {
+                var sampleIcons = new[] { "bi-book", "bi-compass", "bi-lightbulb", "bi-cpu", "bi-pen", "bi-palette" };
+                int iconIdx = 0;
+                foreach (var cat in Model.Take(6))
+                {
+                    var icon = sampleIcons[iconIdx % sampleIcons.Length];
+                    iconIdx++;
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <a asp-controller="Category" asp-action="Edit" asp-route-id="@cat.Id" class="category-portal-card">
+                            <div class="category-icon-bubble">
+                                <i class="bi @icon"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-truncate w-100">@cat.Name</h6>
+                            <small class="text-muted">Thứ tự: @cat.DisplayOrder</small>
+                        </a>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-book"></i></div>
+                        <h6 class="fw-bold mb-1">Văn Học &amp; Tiểu Thuyết</h6>
+                        <small class="text-muted">420+ tựa sách</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-compass"></i></div>
+                        <h6 class="fw-bold mb-1">Khoa Học Viễn Tưởng</h6>
+                        <small class="text-muted">180+ tựa sách</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-lightbulb"></i></div>
+                        <h6 class="fw-bold mb-1">Phát Triển Bản Thân</h6>
+                        <small class="text-muted">210+ tựa sách</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-cpu"></i></div>
+                        <h6 class="fw-bold mb-1">Công Nghệ &amp; Xã Hội</h6>
+                        <small class="text-muted">130+ tựa sách</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-pen"></i></div>
+                        <h6 class="fw-bold mb-1">Triết Học &amp; Tiểu Luận</h6>
+                        <small class="text-muted">160+ tựa sách</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-2">
+                    <div class="category-portal-card">
+                        <div class="category-icon-bubble"><i class="bi bi-palette"></i></div>
+                        <h6 class="fw-bold mb-1">Manga &amp; Nghệ Thuật</h6>
+                        <small class="text-muted">190+ tựa sách</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- 3. CURRENT BESTSELLERS -->
+<section id="bestsellers" class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4 gap-3">
+            <div>
+                <span class="text-uppercase fw-bold text-sage small" style="letter-spacing: 0.12em;">Được Yêu Thích Nhất</span>
+                <h2 class="font-serif fw-bold text-dark mb-0">Sách Bán Chạy Trong Tháng</h2>
+            </div>
+            <!-- Filter Pills -->
+            <div class="d-flex flex-wrap gap-2 p-1 rounded-pill bg-surface-low border">
+                <button class="btn btn-sm btn-terracotta px-3 py-1 rounded-pill">Tất Cả</button>
+                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Tiểu Thuyết</button>
+                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Phi Hư Cấu</button>
+                <button class="btn btn-sm text-muted px-3 py-1 rounded-pill">Triết Lý</button>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Book 1 -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="book-card">
+                    <div class="book-cover-container mb-3" style="aspect-ratio: 1 / 1.4;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3JoJJkcYu28-N8_myGQVrkX0Je1g3mYpZ1Ls9bSnKS1Pei33LjkCAnUjAfDgvQTU1K5k7rGH18DrmhbOfLjPnUyar14UHSJOkX3H06gDS1CtdkLr2MOIdYJig4k_yTOYuuY1JxrTiZTvimOs9MnnchDsy6WrliZXCWHZ1wWMOflus6hOqeZHPAiheaBfoTMZ4mMfpoDXfh35z08Mq9S2lSBniwKDpot0LRVTCwc0hCrbAk1oxpyQ" 
+                             alt="The Architecture of Solitude" class="w-100 h-100 object-fit-cover" />
+                        <div class="book-spine-crease"></div>
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-terracotta rounded-pill px-2 py-1 small fw-bold">Bestseller #1</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 text-terracotta small mb-1">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark">4.9</span>
+                        <span class="text-muted">(342 đánh giá)</span>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark fs-6 text-truncate mb-1">The Architecture of Solitude</h5>
+                    <p class="small text-muted mb-3">Clara Vance</p>
+                    <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                        <div>
+                            <div class="fw-bold text-terracotta fs-5">215.000₫</div>
+                            <small class="text-muted text-decoration-line-through">280.000₫</small>
+                        </div>
+                        <button class="btn btn-sm btn-terracotta rounded-pill px-3 d-flex align-items-center gap-1" title="Thêm vào giỏ">
+                            <i class="bi bi-bag-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 2 -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="book-card">
+                    <div class="book-cover-container mb-3" style="aspect-ratio: 1 / 1.4;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzsmX4eK3it5BPUdmPOtAgsPomHItqM0GWWwHFs8PdrSuhjMoykUPiM0xqvlq76BFexEsOXEyFqsdJZ-DfjxYRvuMnQhfUJyt2cwjW7KrN3hdR2COC0FTCmcadbM3nxUomPDWftMNXw2nmvDfhrEoFS8qcw18SR8uR-uxVZQwEZz2V0WF6Liw88uMs4Mkajkd0IJiZhHKsG4Osjkv3JbdnCRae69IInZL-xLGo0gDIpvGtKdK1hLk" 
+                             alt="Quiet Mind, Deep Work" class="w-100 h-100 object-fit-cover" />
+                        <div class="book-spine-crease"></div>
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-sage rounded-pill px-2 py-1 small fw-bold">Khuyên Đọc</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 text-terracotta small mb-1">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark">4.8</span>
+                        <span class="text-muted">(518 đánh giá)</span>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark fs-6 text-truncate mb-1">Quiet Mind, Deep Work</h5>
+                    <p class="small text-muted mb-3">Dr. Aris Thorne</p>
+                    <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                        <div>
+                            <div class="fw-bold text-terracotta fs-5">185.000₫</div>
+                            <small class="text-muted text-decoration-line-through">240.000₫</small>
+                        </div>
+                        <button class="btn btn-sm btn-terracotta rounded-pill px-3 d-flex align-items-center gap-1" title="Thêm vào giỏ">
+                            <i class="bi bi-bag-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 3 -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="book-card">
+                    <div class="book-cover-container mb-3" style="aspect-ratio: 1 / 1.4;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBN7UXflRcfK2iAi6Q7ktXG16VHIzhiCSqNbS-QgTKx4V77mcdPuABhcXE2waFubol_Sstolx557PzGOyQO1ptFSKF5mWTP35DTqR3IIOjZs3QEVJ9uh85OK2TjtKXera3Dis5brCrD37JrY5aXFOlPRDtlnJS14zpqBQl1_cp_eLuwbOcqaT6jXDXryxjx_9E9QEV6TSfJzQ5I1333TF8R-E8mcjGIPRPADeEhe60UXXMqQEDJ38s" 
+                             alt="Starlight Cartography" class="w-100 h-100 object-fit-cover" />
+                        <div class="book-spine-crease"></div>
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-dark rounded-pill px-2 py-1 small fw-bold">Mới Xuất Bản</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 text-terracotta small mb-1">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark">5.0</span>
+                        <span class="text-muted">(129 đánh giá)</span>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark fs-6 text-truncate mb-1">Starlight Cartography</h5>
+                    <p class="small text-muted mb-3">Kenji Sato</p>
+                    <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                        <div>
+                            <div class="fw-bold text-terracotta fs-5">220.000₫</div>
+                            <small class="text-muted text-decoration-line-through">275.000₫</small>
+                        </div>
+                        <button class="btn btn-sm btn-terracotta rounded-pill px-3 d-flex align-items-center gap-1" title="Thêm vào giỏ">
+                            <i class="bi bi-bag-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book 4 -->
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="book-card">
+                    <div class="book-cover-container mb-3" style="aspect-ratio: 1 / 1.4;">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAj9C2pYRtnrw8zsiz2y1OAZVogxxH4jHmXNCWN-pYqcYSHrtcWsinQPH9CwzHKZUk3_NSgK4mgz-eyPW7fdtMjpaFYT9bwX5qYEPIAi0xvaZUiBG9maMvdeSCXlgHuUIaKpQdfltSOXCsZE9WDCnXUCwkAH_qAbApsS0nlzTSuSwttMb0kK0BI02tuOGUwFja8KCrQoCuRV_1NZ0xKM6jA8yMWymDodLh9vHHEYTLojJoWoVKApqo" 
+                             alt="Letters to a Stoic Companion" class="w-100 h-100 object-fit-cover" />
+                        <div class="book-spine-crease"></div>
+                        <span class="position-absolute top-0 start-0 m-2 badge bg-terracotta rounded-pill px-2 py-1 small fw-bold">Đánh Giá Cao</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 text-terracotta small mb-1">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-dark">4.9</span>
+                        <span class="text-muted">(890 đánh giá)</span>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark fs-6 text-truncate mb-1">Letters to a Stoic Companion</h5>
+                    <p class="small text-muted mb-3">Marcus Lin</p>
+                    <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top">
+                        <div>
+                            <div class="fw-bold text-terracotta fs-5">175.000₫</div>
+                            <small class="text-muted text-decoration-line-through">220.000₫</small>
+                        </div>
+                        <button class="btn btn-sm btn-terracotta rounded-pill px-3 d-flex align-items-center gap-1" title="Thêm vào giỏ">
+                            <i class="bi bi-bag-plus"></i> Thêm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 4. PROMOTIONAL BANNER -->
+<section id="promotions" class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="p-4 p-md-5 rounded-4 position-relative overflow-hidden shadow-sm" style="background: linear-gradient(135deg, var(--bg-surface-high) 0%, var(--bg-surface-low) 100%); border: 1px solid rgba(222, 192, 183, 0.5);">
+            <div class="row align-items-center g-4 position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <div class="d-inline-flex align-items-center gap-2 text-terracotta text-uppercase fw-bold small mb-2" style="letter-spacing: 0.12em;">
+                        <i class="bi bi-cup-hot-fill"></i>
+                        <span>Sự Kiện Đọc Sách Mùa Thu</span>
+                    </div>
+                    <h2 class="font-serif fw-bold text-dark display-6 mb-2">Thảnh Thơi Cùng Từng Trang Sách</h2>
+                    <p class="fs-5 text-terracotta font-serif mb-2">Mua 2 Cuốn Bất Kỳ, Giảm Thêm 10% Toàn Bộ Giỏ Hàng</p>
+                    <p class="text-muted small mb-4">Gói ghém bình yên bên tách trà ấm và những trang sách mới. Tặng kèm bookmark dập nổi độc quyền từ xưởng in thủ công.</p>
+
+                    <!-- Voucher box -->
+                    <div class="d-flex flex-wrap align-items-center gap-3">
+                        <div class="d-inline-flex align-items-center bg-white px-3 py-2 rounded-pill shadow-sm border gap-2">
+                            <span class="small text-muted text-uppercase">MÃ:</span>
+                            <span class="fw-bold text-terracotta font-monospace fs-6" id="couponCode">READMORE</span>
+                            <button type="button" class="btn btn-sm btn-light rounded-pill px-2 py-0 small fw-bold" onclick="navigator.clipboard.writeText('READMORE'); this.innerHTML='Đã sao chép!'; setTimeout(()=>this.innerHTML='Sao chép', 2000)">Sao chép</button>
+                        </div>
+                        <span class="small text-sage fw-semibold d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-truck"></i> Miễn phí vận chuyển toàn quốc
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 text-lg-end">
+                    <a href="#bestsellers" class="btn btn-terracotta px-4 py-3 d-inline-flex align-items-center gap-2">
+                        <span>Khám Phá Sách Khuyến Mãi</span>
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 5. READER REVIEWS -->
+<section id="community" class="py-5 bg-surface-low">
+    <div class="container px-4 px-lg-5">
+        <div class="text-center max-w-2xl mx-auto mb-5">
+            <span class="text-uppercase fw-bold text-sage small" style="letter-spacing: 0.12em;">Cộng Đồng Độc Giả</span>
+            <h2 class="font-serif fw-bold text-dark mt-1">Cảm Nhận Từ Những Người Yêu Sách</h2>
+            <p class="text-muted small">Hơn 45.000 cuốn sách đã được gửi gắm đến những góc đọc yên bình khắp mọi miền đất nước.</p>
+        </div>
+
+        <div class="row g-4">
+            <!-- Review 1 -->
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div>
+                        <div class="text-terracotta mb-3">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-4" style="line-height: 1.6;">
+                            “PageCraft đem lại cảm giác ấm cúng như bước vào một tiệm sách xưa ở phố cổ. Đóng gói rất chỉn chu, không hề cong mép và đi kèm bookmark dập nổi cực kỳ tinh tế.”
+                        </p>
+                    </div>
+                    <div class="p-3 bg-surface-low rounded-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block text-dark small">Thùy Linh</strong>
+                            <small class="text-muted">Độc giả thân thiết • Hà Nội</small>
+                        </div>
+                        <span class="badge bg-terracotta rounded-pill">Đang đọc Sách</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div>
+                        <div class="text-terracotta mb-3">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-4" style="line-height: 1.6;">
+                            “Sự tuyển chọn tác phẩm ở đây rất có gu. Mình đã tìm được 3 cuốn sách thay đổi tư duy làm việc nhờ vào mục Khuyên đọc của nhà sách. Giao hàng rất nhanh.”
+                        </p>
+                    </div>
+                    <div class="p-3 bg-surface-low rounded-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block text-dark small">Hoàng Nam</strong>
+                            <small class="text-muted">Độc giả • TP. Hồ Chí Minh</small>
+                        </div>
+                        <span class="badge bg-sage rounded-pill">Đã mua 12 cuốn</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="col-md-4">
+                <div class="testimonial-card">
+                    <div>
+                        <div class="text-terracotta mb-3">
+                            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i><i class="bi bi-star-fill ms-1"></i>
+                        </div>
+                        <p class="fst-italic text-dark mb-4" style="line-height: 1.6;">
+                            “Chất lượng giấy in và cảm giác cầm trên tay đúng như mong đợi. Có cảm giác PageCraft như một người bạn tri kỷ luôn biết cuốn sách nào phù hợp nhất với tâm trạng của mình.”
+                        </p>
+                    </div>
+                    <div class="p-3 bg-surface-low rounded-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong class="d-block text-dark small">Minh Anh</strong>
+                            <small class="text-muted">Độc giả • Đà Nẵng</small>
+                        </div>
+                        <span class="badge bg-terracotta rounded-pill">Thành viên VIP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 6. THE BOOKSELLER'S PLEDGE -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5">
+        <div class="row g-4 text-center text-md-start">
+            <div class="col-md-4">
+                <div class="p-4 bg-surface-low rounded-4 h-100">
+                    <div class="category-icon-bubble bg-sage text-white mb-3">
+                        <i class="bi bi-box-seam-fill"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark mb-2">Đóng Gói Chống Va Đập</h5>
+                    <p class="small text-muted mb-0">Hộp carton bảo vệ chuyên dụng không nhựa độc hại, giữ cho các góc sách và gáy sách luôn phẳng phiu hoàn hảo.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-surface-low rounded-4 h-100">
+                    <div class="category-icon-bubble bg-terracotta text-white mb-3">
+                        <i class="bi bi-patch-check-fill"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark mb-2">Sách Thật 100% Bản Quyền</h5>
+                    <p class="small text-muted mb-0">Mỗi ấn phẩm đều được phân phối chính ngạch, ủng hộ trực tiếp tác giả và nhà xuất bản uy tín.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-surface-low rounded-4 h-100">
+                    <div class="category-icon-bubble mb-3" style="background: var(--bg-surface-highest); color: var(--text-main);">
+                        <i class="bi bi-chat-heart-fill"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark mb-2">Tư Vấn Chọn Sách Cá Nhân</h5>
+                    <p class="small text-muted mb-0">Chưa biết nên đọc gì tiếp theo? Hãy chia sẻ tựa sách bạn từng yêu thích, đội ngũ mọt sách của chúng tôi sẽ gợi ý cho bạn.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

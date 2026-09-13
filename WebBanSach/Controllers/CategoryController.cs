@@ -43,7 +43,7 @@ namespace WebBanSach.Controllers
             }
 
             // Custom Validation 2: Tên danh mục không được trùng với danh mục đã có trong CSDL
-            if (_db.Categories.Any(u => u.Name.ToLower() == obj.Name.ToLower()))
+            if (!string.IsNullOrEmpty(obj.Name) && _db.Categories.Any(u => u.Name.ToLower() == obj.Name.ToLower()))
             {
                 ModelState.AddModelError("Name", "Tên danh mục này đã tồn tại trong hệ thống!");
             }
@@ -92,7 +92,7 @@ namespace WebBanSach.Controllers
             }
 
             // Kiểm tra trùng tên với danh mục khác (trừ chính nó)
-            if (_db.Categories.Any(u => u.Name.ToLower() == obj.Name.ToLower() && u.Id != obj.Id))
+            if (!string.IsNullOrEmpty(obj.Name) && _db.Categories.Any(u => u.Name.ToLower() == obj.Name.ToLower() && u.Id != obj.Id))
             {
                 ModelState.AddModelError("Name", "Tên danh mục này đã được sử dụng bởi danh mục khác!");
             }
@@ -143,7 +143,7 @@ namespace WebBanSach.Controllers
 
             _db.Categories.Remove(obj);
             _db.SaveChanges();
-            TempData["success"] = "Category deleted successfully";
+            TempData["success"] = "Xóa danh mục thành công!";
             return RedirectToAction("Index");
         }
     }
