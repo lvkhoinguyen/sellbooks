@@ -1,0 +1,97 @@
+@model OrderVM
+@{
+    ViewData["Title"] = "Đặt Hàng Thành Công";
+}
+
+<div class="container px-4 px-lg-5 py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Success Animation / Icon -->
+            <div class="rounded-circle bg-success text-white d-inline-flex align-items-center justify-content-center shadow-lg mb-4" style="width: 88px; height: 88px; font-size: 2.8rem;">
+                <i class="bi bi-check-lg"></i>
+            </div>
+
+            <h1 class="font-serif fw-bold text-dark display-5 mb-2">Cảm Ơn Bạn Đã Đặt Hàng!</h1>
+            <p class="lead text-muted mb-4" style="max-width: 580px; margin: 0 auto; line-height: 1.6;">
+                Đơn hàng của bạn đã được tiếp nhận và đang được đội ngũ thủ thư của <strong>PageCraft Booksellers</strong> chuẩn bị đóng gói.
+            </p>
+
+            <!-- Order Info Card -->
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden text-start mb-4" style="border: 1px solid rgba(222, 192, 183, 0.5) !important; background-color: #ffffff;">
+                <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex flex-wrap justify-content-between align-items-center gap-2" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-terracotta text-white rounded-pill px-3 py-2 fs-6">
+                            Mã Đơn: #@Model.OrderHeader.Id
+                        </span>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-2 small">
+                            <i class="bi bi-hourglass-split me-1"></i>Chờ Xác Nhận
+                        </span>
+                    </div>
+                    <span class="text-muted small">
+                        <i class="bi bi-calendar3 me-1"></i>@Model.OrderHeader.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <div class="row g-4">
+                        <div class="col-md-6 border-end-md" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                            <h6 class="fw-bold text-dark small text-uppercase mb-3" style="letter-spacing: 0.05em;">
+                                <i class="bi bi-geo-alt-fill text-terracotta me-1"></i>Thông Tin Giao Nhận
+                            </h6>
+                            <p class="mb-1 fw-semibold text-dark">@Model.OrderHeader.Name</p>
+                            <p class="mb-1 text-muted small"><i class="bi bi-telephone me-1"></i>@Model.OrderHeader.PhoneNumber</p>
+                            <p class="mb-1 text-muted small"><i class="bi bi-building me-1"></i>@Model.OrderHeader.StreetAddress, @Model.OrderHeader.City</p>
+                            <p class="mb-0 text-muted small"><i class="bi bi-wallet2 me-1"></i>Thanh toán khi nhận hàng (COD)</p>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h6 class="fw-bold text-dark small text-uppercase mb-3" style="letter-spacing: 0.05em;">
+                                <i class="bi bi-book text-terracotta me-1"></i>Ấn Phẩm Trong Đơn
+                            </h6>
+                            <ul class="list-unstyled mb-3 space-y-2">
+                                @foreach (var item in Model.OrderDetail)
+                                {
+                                    <li class="d-flex justify-content-between align-items-center small mb-2 pb-1 border-bottom border-light">
+                                        <span class="text-truncate me-2" style="max-width: 220px;" title="@item.Book?.Title">
+                                            @(item.Book?.Title ?? "Sách") <strong class="text-muted">× @item.Count</strong>
+                                        </span>
+                                        <span class="fw-bold font-serif text-dark">
+                                            @((item.Price * item.Count).ToString("#,##0")) ₫
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                            @if (Model.OrderHeader.DiscountAmount > 0)
+                            {
+                                <div class="d-flex justify-content-between align-items-center small mb-2 text-success">
+                                    <span><i class="bi bi-tag-fill me-1"></i>Voucher (@Model.OrderHeader.CouponCode):</span>
+                                    <span class="fw-bold">-@Model.OrderHeader.DiscountAmount.ToString("#,##0") ₫</span>
+                                </div>
+                            }
+                            <div class="d-flex justify-content-between align-items-center pt-2 border-top">
+                                <span class="fw-bold text-dark">Tổng Cộng:</span>
+                                <span class="fw-bold font-serif text-terracotta fs-5">@Model.OrderHeader.OrderTotal.ToString("#,##0") ₫</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a asp-controller="Order" asp-action="Details" asp-route-orderId="@Model.OrderHeader.Id" class="btn btn-terracotta rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                    <i class="bi bi-receipt"></i>
+                    <span>Theo Dõi Chi Tiết Đơn Hàng</span>
+                </a>
+                <a asp-controller="Order" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-clock-history"></i>
+                    <span>Lịch Sử Đơn Hàng</span>
+                </a>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-terracotta rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-shop"></i>
+                    <span>Tiếp Tục Chọn Sách</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,201 @@
+@model IEnumerable<OrderHeader>
+@{
+    var isAdmin = User.IsInRole(SD.Role_Admin);
+    ViewData["Title"] = isAdmin ? "Quản Lý Đơn Hàng" : "Lịch Sử Đơn Hàng";
+    var currentStatus = ViewData["CurrentStatus"]?.ToString()?.ToLower() ?? "all";
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">
+                @(isAdmin ? "Quản Lý Đơn Hàng" : "Lịch Sử Đơn Hàng Của Tôi")
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                <i class="bi bi-box-seam"></i>
+            </span>
+            <div>
+                <h2 class="font-serif fw-bold text-dark mb-0 fs-3">
+                    @(isAdmin ? "Quản Trị Đơn Hàng Toàn Hệ Thống" : "Lịch Sử Đơn Hàng Của Bạn")
+                </h2>
+                <p class="text-muted small mb-0">
+                    @(isAdmin ? "Theo dõi tiến độ, xác nhận đơn hàng, giao vận và xử lý hủy đơn hoàn kho" : "Theo dõi trạng thái các ấn phẩm văn học bạn đã đặt mua tại PageCraft")
+                </p>
+            </div>
+        </div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-terracotta rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2">
+            <i class="bi bi-shop"></i> Khám Phá Thêm Sách Hay
+        </a>
+    </div>
+
+    <!-- Status Tabs Filter -->
+    <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+        <div class="card-body p-2">
+            <ul class="nav nav-pills nav-fill flex-column flex-sm-row gap-2">
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 @(currentStatus == "all" ? "active bg-terracotta text-white" : "text-muted hover-bg")" asp-action="Index" asp-route-status="all">
+                        <i class="bi bi-grid-fill me-1"></i>Tất Cả
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 @(currentStatus == "pending" ? "active bg-terracotta text-white" : "text-muted hover-bg")" asp-action="Index" asp-route-status="pending">
+                        <i class="bi bi-hourglass-split me-1"></i>Chờ Xác Nhận
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 @(currentStatus == "inprocess" ? "active bg-terracotta text-white" : "text-muted hover-bg")" asp-action="Index" asp-route-status="inprocess">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Đang Xử Lý
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 @(currentStatus == "completed" ? "active bg-terracotta text-white" : "text-muted hover-bg")" asp-action="Index" asp-route-status="completed">
+                        <i class="bi bi-truck me-1"></i>Đang Giao Hàng
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link rounded-pill py-2 @(currentStatus == "cancelled" ? "active bg-terracotta text-white" : "text-muted hover-bg")" asp-action="Index" asp-route-status="cancelled">
+                        <i class="bi bi-x-circle me-1"></i>Đã Hủy
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Orders Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                <i class="bi bi-receipt-cutoff text-terracotta me-2"></i>Danh Sách Đơn Hàng (@Model.Count() đơn)
+            </span>
+            <small class="text-muted">Cập nhật theo thời gian thực</small>
+        </div>
+
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-surface-low text-muted small text-uppercase" style="letter-spacing: 0.04em; border-bottom: 1px solid rgba(222, 192, 183, 0.45);">
+                            <tr>
+                                <th scope="col" class="ps-4 py-3" style="width: 100px;">Mã Đơn</th>
+                                <th scope="col" class="py-3">Người Nhận</th>
+                                <th scope="col" class="py-3">Địa Chỉ Giao</th>
+                                <th scope="col" class="py-3">Ngày Đặt</th>
+                                <th scope="col" class="py-3 text-end">Tổng Tiền</th>
+                                <th scope="col" class="py-3 text-center">Trạng Thái Đơn</th>
+                                <th scope="col" class="pe-4 py-3 text-end" style="width: 120px;">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr style="border-bottom: 1px solid rgba(222, 192, 183, 0.25);">
+                                    <!-- Order ID -->
+                                    <td class="ps-4 py-3">
+                                        <span class="badge bg-surface-low text-terracotta border px-3 py-2 fw-bold" style="border-color: rgba(200, 90, 56, 0.3) !important;">
+                                            #@order.Id
+                                        </span>
+                                    </td>
+
+                                    <!-- Customer Name -->
+                                    <td class="py-3">
+                                        <div class="fw-bold text-dark">@order.Name</div>
+                                        <small class="text-muted"><i class="bi bi-telephone me-1"></i>@order.PhoneNumber</small>
+                                        @if (isAdmin && order.ApplicationUser != null)
+                                        {
+                                            <div class="small text-muted" style="font-size: 0.72rem;">@order.ApplicationUser.Email</div>
+                                        }
+                                    </td>
+
+                                    <!-- Address -->
+                                    <td class="py-3">
+                                        <div class="text-dark small text-truncate" style="max-width: 200px;" title="@order.StreetAddress, @order.City">
+                                            @order.StreetAddress, @order.City
+                                        </div>
+                                    </td>
+
+                                    <!-- Order Date -->
+                                    <td class="py-3 text-muted small">
+                                        @order.OrderDate.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <!-- Total -->
+                                    <td class="py-3 text-end">
+                                        <span class="fw-bold font-serif text-terracotta fs-6">
+                                            @order.OrderTotal.ToString("#,##0") ₫
+                                        </span>
+                                    </td>
+
+                                    <!-- Order Status Badge -->
+                                    <td class="py-3 text-center">
+                                        @if (order.OrderStatus == SD.StatusPending)
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-1 fw-semibold small">
+                                                <i class="bi bi-hourglass-split me-1"></i>Chờ Xác Nhận
+                                            </span>
+                                        }
+                                        else if (order.OrderStatus == SD.StatusInProcess)
+                                        {
+                                            <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill px-3 py-1 fw-semibold small">
+                                                <i class="bi bi-gear-fill me-1"></i>Đang Xử Lý
+                                            </span>
+                                        }
+                                        else if (order.OrderStatus == SD.StatusShipped)
+                                        {
+                                            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-semibold small">
+                                                <i class="bi bi-truck me-1"></i>Đang Giao Hàng
+                                            </span>
+                                        }
+                                        else if (order.OrderStatus == SD.StatusCancelled)
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1 fw-semibold small">
+                                                <i class="bi bi-x-circle me-1"></i>Đã Hủy
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary-subtle text-secondary rounded-pill px-3 py-1 small">
+                                                @order.OrderStatus
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="pe-4 py-3 text-end">
+                                        <a asp-action="Details" asp-route-orderId="@order.Id" class="btn btn-sm btn-outline-terracotta rounded-pill px-3 d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-eye"></i> Chi Tiết
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5 px-4">
+                    <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center shadow-sm mb-3" style="width: 70px; height: 70px; font-size: 2rem;">
+                        <i class="bi bi-inbox"></i>
+                    </div>
+                    <h5 class="font-serif fw-bold text-dark mb-1">Chưa Có Đơn Hàng Nào</h5>
+                    <p class="text-muted small mb-3">Hiện không có đơn hàng nào khớp với trạng thái bạn đang lọc.</p>
+                    <a asp-action="Index" asp-route-status="all" class="btn btn-sm btn-outline-secondary rounded-pill px-3">Xem Tất Cả Đơn Hàng</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

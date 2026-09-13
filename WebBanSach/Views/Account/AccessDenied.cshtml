@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "Không Có Quyền Truy Cập";
+}
+
+<div class="container px-4 px-lg-5 py-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6 text-center">
+            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-danger-subtle text-danger d-inline-flex align-items-center justify-content-center shadow-sm mb-4 mx-auto" style="width: 84px; height: 84px; font-size: 2.5rem;">
+                    <i class="bi bi-shield-x"></i>
+                </div>
+
+                <span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 small fw-bold mb-3 d-inline-block mx-auto" style="letter-spacing: 0.05em;">
+                    LỖI 403 • TỪ CHỐI TRUY CẬP
+                </span>
+
+                <h3 class="font-serif fw-bold text-dark mb-3">Bạn Không Có Thẩm Quyền Truy Cập</h3>
+                <p class="text-muted small mb-4" style="line-height: 1.6;">
+                    Trang bạn vừa yêu cầu thuộc khu vực quản trị dành riêng cho <strong>Quản Trị Viên (Admin)</strong> của PageCraft. Tài khoản hiện tại của bạn không đủ quyền để thao tác hoặc xem dữ liệu này.
+                </p>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-terracotta rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-house-door-fill"></i>
+                        <span>Về Trang Chủ</span>
+                    </a>
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-outline-secondary rounded-pill px-4 py-2 d-inline-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-person-fill-lock"></i>
+                        <span>Đăng Nhập Tài Khoản Khác</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

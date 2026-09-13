@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebBanSach.Data;
 using WebBanSach.Models;
 using WebBanSach.Models.ViewModels;
+using WebBanSach.Utility;
 
 namespace WebBanSach.Controllers
 {
+    [Authorize(Roles = SD.Role_Admin)]
     public class BookController : Controller
     {
         private readonly ApplicationDbContext _db;

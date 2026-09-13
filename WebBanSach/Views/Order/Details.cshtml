@@ -1,0 +1,345 @@
+@model OrderVM
+@{
+    var isAdmin = User.IsInRole(SD.Role_Admin);
+    ViewData["Title"] = $"Chi Tiết Đơn Hàng #{Model.OrderHeader.Id}";
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a asp-action="Index" class="text-muted text-decoration-none">
+                    @(isAdmin ? "Quản Lý Đơn Hàng" : "Lịch Sử Đơn Hàng")
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">
+                Đơn Hàng #@Model.OrderHeader.Id
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                <i class="bi bi-receipt"></i>
+            </span>
+            <div>
+                <div class="d-flex align-items-center gap-2">
+                    <h2 class="font-serif fw-bold text-dark mb-0 fs-3">Đơn Hàng #@Model.OrderHeader.Id</h2>
+                    @if (Model.OrderHeader.OrderStatus == SD.StatusPending)
+                    {
+                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle rounded-pill px-3 py-1 small">
+                            <i class="bi bi-hourglass-split me-1"></i>Chờ Xác Nhận
+                        </span>
+                    }
+                    else if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+                    {
+                        <span class="badge bg-info-subtle text-info-emphasis border border-info-subtle rounded-pill px-3 py-1 small">
+                            <i class="bi bi-gear-fill me-1"></i>Đang Xử Lý
+                        </span>
+                    }
+                    else if (Model.OrderHeader.OrderStatus == SD.StatusShipped)
+                    {
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 small">
+                            <i class="bi bi-truck me-1"></i>Đang Giao Hàng
+                        </span>
+                    }
+                    else if (Model.OrderHeader.OrderStatus == SD.StatusCancelled)
+                    {
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill px-3 py-1 small">
+                            <i class="bi bi-x-circle me-1"></i>Đã Hủy
+                        </span>
+                    }
+                </div>
+                <small class="text-muted">Ngày đặt: @Model.OrderHeader.OrderDate.ToString("dd/MM/yyyy HH:mm")</small>
+            </div>
+        </div>
+
+        <a asp-action="Index" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-2 d-inline-flex align-items-center gap-1">
+            <i class="bi bi-arrow-left"></i> Quay Lại Danh Sách
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Left Column: Delivery & Shipping Information -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                    <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-truck text-terracotta me-2"></i>Thông Tin Giao Nhận &amp; Vận Chuyển
+                    </span>
+                    @if (isAdmin)
+                    {
+                        <span class="badge bg-terracotta text-white rounded-pill px-2 py-1 small">Quyền Quản Trị</span>
+                    }
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="post" asp-action="UpdateOrderDetail">
+                        <input asp-for="OrderHeader.Id" type="hidden" />
+
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Họ và tên người nhận</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.Name" class="form-control" required />
+                                }
+                                else
+                                {
+                                    <input asp-for="OrderHeader.Name" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Số điện thoại</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.PhoneNumber" class="form-control" required />
+                                }
+                                else
+                                {
+                                    <input asp-for="OrderHeader.PhoneNumber" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label small fw-semibold text-dark">Địa chỉ giao hàng</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.StreetAddress" class="form-control" required />
+                                }
+                                else
+                                {
+                                    <input asp-for="OrderHeader.StreetAddress" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Tỉnh / Thành phố</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.City" class="form-control" required />
+                                }
+                                else
+                                {
+                                    <input asp-for="OrderHeader.City" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Phương thức thanh toán</label>
+                                <div class="form-control-plaintext ps-2 bg-surface-low rounded-3 small">
+                                    <span class="badge bg-sage text-white rounded-pill px-2 py-1">COD</span>
+                                    @(Model.OrderHeader.PaymentStatus == SD.PaymentStatusApproved ? "Đã Thanh Toán" : "Thanh toán khi nhận hàng")
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Đơn vị vận chuyển (Carrier)</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.Carrier" id="carrierInput" class="form-control" placeholder="Viettel Post, VNPost, GHTK..." />
+                                }
+                                else
+                                {
+                                    <input value="@(string.IsNullOrEmpty(Model.OrderHeader.Carrier) ? "Chưa cập nhật" : Model.OrderHeader.Carrier)" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            <div class="col-sm-6">
+                                <label class="form-label small fw-semibold text-dark">Mã vận đơn (Tracking Number)</label>
+                                @if (isAdmin)
+                                {
+                                    <input asp-for="OrderHeader.TrackingNumber" id="trackingInput" class="form-control" placeholder="Mã theo dõi hành trình bưu phẩm" />
+                                }
+                                else
+                                {
+                                    <input value="@(string.IsNullOrEmpty(Model.OrderHeader.TrackingNumber) ? "Chưa có mã vận đơn" : Model.OrderHeader.TrackingNumber)" readonly class="form-control-plaintext fw-bold ps-2 bg-surface-low rounded-3" />
+                                }
+                            </div>
+
+                            @if (Model.OrderHeader.ShippingDate.HasValue)
+                            {
+                                <div class="col-12">
+                                    <div class="p-3 bg-success-subtle text-success rounded-3 small d-flex align-items-center gap-2">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Đã xuất kho giao cho đơn vị vận chuyển vào: <strong>@Model.OrderHeader.ShippingDate.Value.ToString("dd/MM/yyyy HH:mm")</strong></span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        @if (isAdmin && Model.OrderHeader.OrderStatus != SD.StatusCancelled)
+                        {
+                            <div class="mt-4 pt-3 border-top d-flex justify-content-end">
+                                <button type="submit" class="btn btn-sm btn-outline-terracotta rounded-pill px-4 py-2 fw-semibold">
+                                    <i class="bi bi-save me-1"></i> Lưu Cập Nhật Thông Tin
+                                </button>
+                            </div>
+                        }
+                    </form>
+                </div>
+            </div>
+
+            <!-- Admin Action Control Panel -->
+            @if (isAdmin)
+            {
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="border: 1px solid rgba(200, 90, 56, 0.35) !important; background-color: #ffffff;">
+                    <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                        <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                            <i class="bi bi-sliders text-terracotta me-2"></i>Quy Trình Xử Lý Đơn Hàng (Admin)
+                        </span>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-wrap gap-3">
+                            <!-- 1. Start Processing Button -->
+                            @if (Model.OrderHeader.OrderStatus == SD.StatusPending)
+                            {
+                                <form method="post" asp-action="StartProcessing" asp-route-orderId="@Model.OrderHeader.Id">
+                                    <button type="submit" class="btn btn-primary rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <i class="bi bi-gear-fill"></i>
+                                        <span>Bắt Đầu Đóng Gói &amp; Xử Lý</span>
+                                    </button>
+                                </form>
+                            }
+
+                            <!-- 2. Ship Order Button -->
+                            @if (Model.OrderHeader.OrderStatus == SD.StatusInProcess)
+                            {
+                                <form method="post" asp-action="ShipOrder" class="d-inline-flex align-items-center gap-2 flex-wrap" onsubmit="return validateShipping();">
+                                    <input type="hidden" name="orderId" value="@Model.OrderHeader.Id" />
+                                    <input type="hidden" name="carrier" id="formCarrier" />
+                                    <input type="hidden" name="trackingNumber" id="formTracking" />
+
+                                    <button type="submit" class="btn btn-success rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2 shadow-sm">
+                                        <i class="bi bi-truck"></i>
+                                        <span>Xuất Kho &amp; Giao Vận</span>
+                                    </button>
+                                </form>
+                            }
+
+                            <!-- 3. Cancel Order & Restore Inventory Button -->
+                            @if (Model.OrderHeader.OrderStatus != SD.StatusCancelled)
+                            {
+                                <form method="post" asp-action="CancelOrder" asp-route-orderId="@Model.OrderHeader.Id" onsubmit="return confirm('Bạn có chắc chắn muốn HỦY đơn hàng #@Model.OrderHeader.Id? Toàn bộ số lượng sách trong đơn sẽ được tự động hoàn trả về kho!');">
+                                    <button type="submit" class="btn btn-outline-danger rounded-pill px-4 py-2 d-inline-flex align-items-center gap-2">
+                                        <i class="bi bi-x-octagon"></i>
+                                        <span>Hủy Đơn Hàng (Hoàn Kho Sách)</span>
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <div class="text-danger small d-flex align-items-center gap-2">
+                                    <i class="bi bi-info-circle-fill"></i>
+                                    <span>Đơn hàng đã hủy. Số lượng sách đã được tự động hoàn trả về kho.</span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right Column: Order Items Summary Card -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 100px; border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                    <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-journals text-terracotta me-2"></i>Ấn Phẩm Trong Đơn
+                    </span>
+                    <span class="badge bg-terracotta text-white rounded-pill px-2 py-1 small">@Model.OrderDetail.Count() tác phẩm</span>
+                </div>
+
+                <div class="card-body p-4 bg-white">
+                    <div class="space-y-3 pb-3 border-bottom" style="max-height: 360px; overflow-y: auto; border-color: rgba(222, 192, 183, 0.35) !important;">
+                        @foreach (var item in Model.OrderDetail)
+                        {
+                            var lineTotal = item.Price * item.Count;
+                            <div class="d-flex align-items-center justify-content-between gap-3 mb-3 pb-2 border-bottom border-light">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-2 overflow-hidden shadow-xs border bg-surface-low" style="width: 44px; height: 62px; flex-shrink: 0; border-color: rgba(222, 192, 183, 0.5) !important;">
+                                        @if (!string.IsNullOrEmpty(item.Book?.ImageUrl))
+                                        {
+                                            <img src="@item.Book.ImageUrl" alt="@item.Book.Title" class="w-100 h-100 object-fit-cover" />
+                                        }
+                                        else
+                                        {
+                                            <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted"><i class="bi bi-book"></i></div>
+                                        }
+                                    </div>
+                                    <div>
+                                        <h6 class="font-serif fw-bold text-dark mb-0 fs-6 text-truncate" style="max-width: 170px;" title="@item.Book?.Title">
+                                            @(item.Book?.Title ?? "Ấn phẩm")
+                                        </h6>
+                                        <small class="text-muted d-block">
+                                            Số lượng: <strong class="text-dark">@item.Count</strong> × @item.Price.ToString("#,##0")₫
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="text-end fw-bold font-serif text-terracotta fs-6">
+                                    @lineTotal.ToString("#,##0") ₫
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Price Calculations -->
+                    <div class="pt-3 pb-3 border-bottom space-y-2" style="border-color: rgba(222, 192, 183, 0.35) !important;">
+                        <div class="d-flex justify-content-between align-items-center small mb-2">
+                            <span class="text-muted">Tổng tiền ấn phẩm:</span>
+                            <span class="fw-semibold text-dark">
+                                @Model.OrderDetail.Sum(x => x.Price * x.Count).ToString("#,##0") ₫
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center small mb-2">
+                            <span class="text-muted">Phí giao hàng:</span>
+                            <span class="fw-semibold text-success">
+                                @((Model.OrderDetail.Sum(x => x.Price * x.Count)) >= 250000 ? "Miễn phí" : "30.000 ₫")
+                            </span>
+                        </div>
+                        @if (Model.OrderHeader.DiscountAmount > 0)
+                        {
+                            <div class="d-flex justify-content-between align-items-center small mb-2 text-success">
+                                <span><i class="bi bi-tag-fill me-1"></i>Mã giảm giá (@Model.OrderHeader.CouponCode):</span>
+                                <span class="fw-bold">-@Model.OrderHeader.DiscountAmount.ToString("#,##0") ₫</span>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Total Payment -->
+                    <div class="d-flex justify-content-between align-items-center pt-3">
+                        <div>
+                            <span class="fw-bold text-dark d-block">Tổng Giá Trị Đơn Hàng</span>
+                            <small class="text-muted" style="font-size: 0.72rem;">Đã bao gồm VAT &amp; phí vận chuyển</small>
+                        </div>
+                        <div class="font-serif fw-bold text-terracotta fs-3">
+                            @Model.OrderHeader.OrderTotal.ToString("#,##0") ₫
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function validateShipping() {
+            var carrier = document.getElementById("carrierInput")?.value || "Viettel Post";
+            var tracking = document.getElementById("trackingInput")?.value || "VP" + Date.now();
+            document.getElementById("formCarrier").value = carrier;
+            document.getElementById("formTracking").value = tracking;
+            return true;
+        }
+    </script>
+}

@@ -1,0 +1,324 @@
+@model ShoppingCartVM
+@{
+    ViewData["Title"] = "Giỏ Hàng Của Bạn";
+    var itemCount = Model.ShoppingCartList.Count();
+    var isFreeShipping = Model.OrderTotal >= 250000;
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Giỏ Hàng</li>
+        </ol>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                <i class="bi bi-bag-heart-fill"></i>
+            </span>
+            <div>
+                <h2 class="font-serif fw-bold text-dark mb-0 fs-3">Túi Sách Tuyển Chọn Của Bạn</h2>
+                <p class="text-muted small mb-0">Xem lại các ấn phẩm văn học, điều chỉnh số lượng và tiến hành đặt mua</p>
+            </div>
+        </div>
+
+        @if (itemCount > 0)
+        {
+            <span class="badge rounded-pill bg-surface-low text-terracotta border px-3 py-2 fw-semibold" style="border-color: rgba(200, 90, 56, 0.3) !important;">
+                @itemCount đầu sách trong giỏ
+            </span>
+        }
+    </div>
+
+    @if (Model.ShoppingCartList != null && Model.ShoppingCartList.Any())
+    {
+        <div class="row g-4">
+            <!-- Left Column: Cart Items List -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                    <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                        <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">Danh Sách Tác Phẩm</span>
+                        <small class="text-muted">Đơn giá đã bao gồm thuế VAT</small>
+                    </div>
+
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-surface-low text-muted small text-uppercase" style="letter-spacing: 0.04em; border-bottom: 1px solid rgba(222, 192, 183, 0.45);">
+                                    <tr>
+                                        <th scope="col" class="ps-4 py-3" style="width: 70px;">Bìa</th>
+                                        <th scope="col" class="py-3">Thông Tin Ấn Phẩm</th>
+                                        <th scope="col" class="py-3 text-center" style="width: 140px;">Số Lượng</th>
+                                        <th scope="col" class="py-3 text-end" style="width: 130px;">Thành Tiền</th>
+                                        <th scope="col" class="pe-4 py-3 text-center" style="width: 60px;">Xóa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ShoppingCartList)
+                                    {
+                                        var lineTotal = item.Price * item.Count;
+
+                                        <tr style="border-bottom: 1px solid rgba(222, 192, 183, 0.3);">
+                                            <!-- Book Cover Thumbnail -->
+                                            <td class="ps-4 py-3">
+                                                <div class="position-relative rounded-3 overflow-hidden shadow-sm border bg-surface-low d-flex align-items-center justify-content-center" style="width: 58px; height: 80px; border-color: rgba(222, 192, 183, 0.5) !important;">
+                                                    @if (!string.IsNullOrEmpty(item.Book?.ImageUrl))
+                                                    {
+                                                        <img src="@item.Book.ImageUrl" alt="@item.Book.Title" class="w-100 h-100 object-fit-cover" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="bi bi-book fs-4 text-terracotta opacity-75"></i>
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <!-- Title, Author, Unit Price -->
+                                            <td class="py-3">
+                                                <h6 class="font-serif fw-bold text-dark mb-1 fs-6">@(item.Book?.Title ?? "Ấn phẩm")</h6>
+                                                <div class="text-muted small mb-1">
+                                                    <i class="bi bi-feather me-1 text-terracotta"></i>@(item.Book?.Author ?? "Tác giả")
+                                                </div>
+                                                <div class="fw-semibold text-terracotta small">
+                                                    @item.Price.ToString("#,##0") ₫
+                                                    @if (item.Book?.ListPrice > item.Price)
+                                                    {
+                                                        <span class="text-muted text-decoration-line-through ms-1 small">
+                                                            @item.Book.ListPrice.ToString("#,##0") ₫
+                                                        </span>
+                                                    }
+                                                </div>
+                                            </td>
+
+                                            <!-- Quantity Controls: Minus, Count, Plus -->
+                                            <td class="py-3 text-center">
+                                                <div class="d-inline-flex align-items-center border rounded-pill p-1 bg-surface-low shadow-sm" style="border-color: rgba(222, 192, 183, 0.7) !important;">
+                                                    <a asp-action="Minus" asp-route-cartId="@item.Id" class="btn btn-sm btn-white rounded-circle p-0 d-flex align-items-center justify-content-center shadow-xs text-dark" style="width: 28px; height: 28px;" title="Giảm 1 cuốn">
+                                                        <i class="bi bi-dash"></i>
+                                                    </a>
+                                                    <span class="px-3 fw-bold text-dark small" style="min-width: 32px;">
+                                                        @item.Count
+                                                    </span>
+                                                    <a asp-action="Plus" asp-route-cartId="@item.Id" class="btn btn-sm btn-white rounded-circle p-0 d-flex align-items-center justify-content-center shadow-xs text-dark" style="width: 28px; height: 28px;" title="Tăng 1 cuốn">
+                                                        <i class="bi bi-plus"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+
+                                            <!-- Line Total -->
+                                            <td class="py-3 text-end">
+                                                <div class="fw-bold font-serif text-dark fs-6">
+                                                    @lineTotal.ToString("#,##0") ₫
+                                                </div>
+                                            </td>
+
+                                            <!-- Remove Action -->
+                                            <td class="pe-4 py-3 text-center">
+                                                <a asp-action="Remove" asp-route-cartId="@item.Id" class="btn btn-sm btn-outline-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Xóa khỏi giỏ hàng">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action in Card -->
+                    <div class="card-footer bg-white py-3 px-4 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.3) !important;">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2 small d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-left"></i>
+                            <span>Tiếp Tục Chọn Sách</span>
+                        </a>
+                        <small class="text-muted">
+                            <i class="bi bi-shield-check text-sage me-1"></i>Thanh toán bảo mật chuẩn quốc tế
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary Card -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 100px; border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                    <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center gap-2" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                        <i class="bi bi-receipt text-terracotta fs-5"></i>
+                        <h5 class="font-serif fw-bold text-dark mb-0 fs-6">Tóm Tắt Đơn Hàng</h5>
+                    </div>
+
+                    <div class="card-body p-4 bg-white">
+                        <!-- Free Shipping Progress -->
+                        <div class="p-3 bg-surface-low rounded-3 border mb-3 small" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                            @if (isFreeShipping)
+                            {
+                                <div class="text-success fw-bold d-flex align-items-center gap-2 mb-1">
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    <span>Bạn đã được Miễn Phí Giao Hàng!</span>
+                                </div>
+                                <small class="text-muted d-block">Áp dụng cho đơn hàng từ 250.000₫ trên toàn quốc.</small>
+                            }
+                            else
+                            {
+                                var needed = 250000 - Model.OrderTotal;
+                                <div class="text-muted mb-1">
+                                    Mua thêm <strong>@needed.ToString("#,##0") ₫</strong> để được <strong>Miễn Phí Giao Hàng</strong>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-terracotta" role="progressbar" style="width: @(Math.Min(100, (Model.OrderTotal / 250000) * 100))%;"></div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Coupon / Voucher Section -->
+                        <div class="mb-3 p-3 rounded-3 bg-surface-low border" style="border-color: rgba(222, 192, 183, 0.6) !important;">
+                            <label class="form-label small fw-bold text-dark d-flex align-items-center gap-1 mb-2">
+                                <i class="bi bi-tag-fill text-terracotta"></i>
+                                <span>Mã Giảm Giá / Voucher</span>
+                            </label>
+
+                            @if (!string.IsNullOrEmpty(Model.CouponCode) && Model.DiscountAmount > 0)
+                            {
+                                <!-- Applied Coupon Badge -->
+                                <div class="d-flex align-items-center justify-content-between p-2 bg-success-subtle border border-success-subtle rounded-3 mb-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-check-circle-fill text-success"></i>
+                                        <div>
+                                            <span class="fw-bold text-success small font-monospace">@Model.CouponCode</span>
+                                            <small class="d-block text-success" style="font-size: 0.75rem;">Đã giảm @Model.DiscountAmount.ToString("#,##0")₫</small>
+                                        </div>
+                                    </div>
+                                    <form method="post" asp-action="RemoveCoupon" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle p-1" title="Hủy mã giảm giá">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+                            else
+                            {
+                                <!-- Coupon Input Form -->
+                                <form method="post" asp-action="ApplyCoupon" id="couponForm" class="d-flex gap-2 mb-2">
+                                    <input type="text" name="couponCode" id="couponCodeInput" class="form-control form-control-sm text-uppercase font-monospace" placeholder="Nhập mã (ví dụ: READMORE)" style="border-color: rgba(222, 192, 183, 0.7);" required />
+                                    <button type="submit" class="btn btn-sm btn-terracotta text-white rounded-pill px-3 fw-semibold text-nowrap">
+                                        Áp Dụng
+                                    </button>
+                                </form>
+
+                                <!-- Quick Coupon Badges -->
+                                <div class="d-flex flex-wrap gap-1 align-items-center pt-1">
+                                    <small class="text-muted" style="font-size: 0.72rem;">Gợi ý:</small>
+                                    <button type="button" class="badge bg-white text-terracotta border border-terracotta rounded-pill px-2 py-1 small fw-normal coupon-suggestion-btn" data-code="READMORE" style="cursor: pointer;">
+                                        READMORE (-10%)
+                                    </button>
+                                    <button type="button" class="badge bg-white text-terracotta border border-terracotta rounded-pill px-2 py-1 small fw-normal coupon-suggestion-btn" data-code="PAGECRAFT50" style="cursor: pointer;">
+                                        PAGECRAFT50 (-50k)
+                                    </button>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <div class="space-y-3 pb-3 border-bottom" style="border-color: rgba(222, 192, 183, 0.35) !important;">
+                            <div class="d-flex justify-content-between align-items-center small mb-2">
+                                <span class="text-muted">Tổng tiền ấn phẩm:</span>
+                                <span class="fw-semibold text-dark">@Model.OrderTotal.ToString("#,##0") ₫</span>
+                            </div>
+
+                            @if (Model.DiscountAmount > 0)
+                            {
+                                <div class="d-flex justify-content-between align-items-center small mb-2 text-success">
+                                    <span>
+                                        <i class="bi bi-tag-fill me-1"></i>Mã giảm giá (@Model.CouponCode):
+                                    </span>
+                                    <span class="fw-bold">-@Model.DiscountAmount.ToString("#,##0") ₫</span>
+                                </div>
+                            }
+
+                            <div class="d-flex justify-content-between align-items-center small mb-2">
+                                <span class="text-muted">Phí giao hàng:</span>
+                                <span class="fw-semibold @(isFreeShipping ? "text-success" : "text-dark")">
+                                    @(isFreeShipping ? "Miễn phí" : "30.000 ₫")
+                                </span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center small">
+                                <span class="text-muted">Đóng gói quà tặng PageCraft:</span>
+                                <span class="fw-semibold text-success">Miễn phí</span>
+                            </div>
+                        </div>
+
+                        <!-- Total Payment -->
+                        <div class="d-flex justify-content-between align-items-center pt-3 mb-4">
+                            <div>
+                                <span class="fw-bold text-dark d-block">Tổng Thanh Toán</span>
+                                <small class="text-muted" style="font-size: 0.72rem;">Đã bao gồm VAT &amp; mã giảm giá</small>
+                            </div>
+                            <div class="font-serif fw-bold text-terracotta fs-4">
+                                @((Math.Max(0, Model.OrderTotal - Model.DiscountAmount + (isFreeShipping ? 0 : 30000))).ToString("#,##0")) ₫
+                            </div>
+                        </div>
+
+                        <!-- Checkout Button -->
+                        <a asp-action="Summary" class="btn btn-terracotta w-100 py-3 rounded-pill fw-semibold shadow-sm d-flex align-items-center justify-content-center gap-2 mb-3 text-white text-decoration-none">
+                            <i class="bi bi-credit-card-fill"></i>
+                            <span>Tiến Hành Thanh Toán</span>
+                        </a>
+
+                        <!-- Trust Badges -->
+                        <div class="pt-2">
+                            <div class="d-flex align-items-center gap-2 small text-muted mb-1">
+                                <i class="bi bi-box-seam text-terracotta"></i>
+                                <span>Đóng gói màng bọc chống sốc cẩn thận</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 small text-muted">
+                                <i class="bi bi-arrow-counterclockwise text-terracotta"></i>
+                                <span>Đổi trả miễn phí trong 7 ngày nếu lỗi</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <!-- Empty Cart State -->
+        <div class="card border-0 shadow-sm rounded-4 p-5 bg-white text-center" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+            <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center shadow-sm mb-3 mx-auto" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                <i class="bi bi-bag-x"></i>
+            </div>
+            <h4 class="font-serif fw-bold text-dark mb-2">Túi Sách Của Bạn Đang Trống</h4>
+            <p class="text-muted small mb-4" style="max-width: 440px; margin: 0 auto; line-height: 1.6;">
+                Bạn chưa thêm ấn phẩm nào vào giỏ hàng. Hãy khám phá kho tàng văn học, triết học và nghệ thuật phong phú tại nhà sách PageCraft.
+            </p>
+            <div>
+                <a asp-controller="Home" asp-action="Index" class="btn btn-terracotta rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-book"></i>
+                    <span>Khám Phá Sách Ngay</span>
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.coupon-suggestion-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const code = this.getAttribute('data-code');
+                const input = document.getElementById('couponCodeInput');
+                if (input && code) {
+                    input.value = code;
+                    input.focus();
+                }
+            });
+        });
+    </script>
+}

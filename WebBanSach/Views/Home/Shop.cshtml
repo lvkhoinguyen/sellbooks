@@ -1,0 +1,324 @@
+@model BookListVM
+@{
+    ViewData["Title"] = "Tủ Sách Tuyển Chọn - Cửa Hàng Sách PageCraft";
+    var startItem = Model.Books.TotalCount == 0 ? 0 : (Model.Books.PageIndex - 1) * Model.PageSize + 1;
+    var endItem = Math.Min(Model.Books.PageIndex * Model.PageSize, Model.Books.TotalCount);
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item">
+                <a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none">
+                    <i class="bi bi-house-door me-1"></i>Trang Chủ
+                </a>
+            </li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Tủ Sách PageCraft</li>
+        </ol>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <div class="p-4 p-md-5 rounded-4 mb-4 position-relative overflow-hidden shadow-sm" style="background: linear-gradient(135deg, var(--bg-surface-high) 0%, var(--bg-surface-low) 100%); border: 1px solid rgba(222, 192, 183, 0.5);">
+        <div class="position-relative" style="z-index: 2; max-width: 680px;">
+            <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-3" style="background: rgba(200, 90, 56, 0.1);">
+                <span class="rounded-circle bg-terracotta d-inline-block" style="width: 8px; height: 8px;"></span>
+                <span class="text-uppercase fw-bold text-terracotta small" style="font-size: 0.75rem; letter-spacing: 0.1em;">Không Gian Đọc Đích Thực</span>
+            </div>
+            <h1 class="display-6 fw-bold font-serif text-dark mb-2">Tủ Sách &amp; Ấn Phẩm Văn Học</h1>
+            <p class="text-muted mb-0 small" style="line-height: 1.6;">
+                Tìm kiếm những áng văn sâu sắc, triết học trường tồn và sách nghệ thuật được tuyển chọn kỹ lưỡng theo sở thích và ngân sách của bạn.
+            </p>
+        </div>
+    </div>
+
+    <!-- Main Layout: Sidebar Filter & Book Grid -->
+    <div class="row g-4">
+        <!-- 1. LEFT COLUMN: FILTER SIDEBAR -->
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-top" style="top: 90px; border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                    <span class="fw-bold text-dark small text-uppercase" style="letter-spacing: 0.05em;">
+                        <i class="bi bi-funnel-fill text-terracotta me-2"></i>Bộ Lọc Sách
+                    </span>
+                    <a asp-action="Shop" class="text-muted small text-decoration-none hover-underline" title="Đặt lại bộ lọc">
+                        <i class="bi bi-arrow-counterclockwise"></i> Xóa lọc
+                    </a>
+                </div>
+
+                <div class="card-body p-4">
+                    <form method="get" asp-action="Shop" id="filterForm">
+                        <input type="hidden" name="pageSize" value="@Model.PageSize" />
+                        <input type="hidden" name="sortBy" id="hiddenSortBy" value="@Model.SortBy" />
+
+                        <!-- A. Search Input -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-dark text-uppercase" style="letter-spacing: 0.05em;">Tìm Kiếm</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-surface-low border-end-0 text-muted" style="border-color: rgba(222, 192, 183, 0.7);"><i class="bi bi-search"></i></span>
+                                <input type="text" name="searchString" value="@Model.SearchString" class="form-control border-start-0 small" placeholder="Tựa sách, tác giả..." style="border-color: rgba(222, 192, 183, 0.7);" />
+                            </div>
+                        </div>
+
+                        <!-- B. Category Filter -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-dark text-uppercase" style="letter-spacing: 0.05em;">Thể Loại</label>
+                            <div class="space-y-1">
+                                <div class="form-check custom-radio mb-2">
+                                    <input class="form-check-input" type="radio" name="categoryId" id="cat_all" value="" @(Model.CategoryId == null ? "checked" : "") onchange="this.form.submit()">
+                                    <label class="form-check-label small text-dark @(Model.CategoryId == null ? "fw-bold text-terracotta" : "")" for="cat_all">
+                                        Tất Cả Thể Loại
+                                    </label>
+                                </div>
+                                @foreach (var cat in Model.Categories)
+                                {
+                                    var isSelected = Model.CategoryId == cat.Id;
+                                    <div class="form-check custom-radio mb-2">
+                                        <input class="form-check-input" type="radio" name="categoryId" id="cat_@cat.Id" value="@cat.Id" @(isSelected ? "checked" : "") onchange="this.form.submit()">
+                                        <label class="form-check-label small text-dark @(isSelected ? "fw-bold text-terracotta" : "")" for="cat_@cat.Id">
+                                            @cat.Name
+                                        </label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- C. Price Range Filter -->
+                        <div class="mb-4 pt-3 border-top" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                            <label class="form-label small fw-bold text-dark text-uppercase" style="letter-spacing: 0.05em;">Khoảng Giá (₫)</label>
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <input type="number" step="10000" name="minPrice" id="minPriceInput" value="@Model.MinPrice" class="form-control form-control-sm small" placeholder="Từ" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" step="10000" name="maxPrice" id="maxPriceInput" value="@Model.MaxPrice" class="form-control form-control-sm small" placeholder="Đến" style="border-color: rgba(222, 192, 183, 0.7);" />
+                                </div>
+                            </div>
+
+                            <!-- Quick Price Pills -->
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2" style="font-size: 0.7rem;" onclick="setPrice(0, 150000)">&lt; 150k</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2" style="font-size: 0.7rem;" onclick="setPrice(150000, 250000)">150k - 250k</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2" style="font-size: 0.7rem;" onclick="setPrice(250000, 500000)">250k - 500k</button>
+                                <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill py-1 px-2" style="font-size: 0.7rem;" onclick="setPrice(500000, null)">&gt; 500k</button>
+                            </div>
+                        </div>
+
+                        <!-- Submit Filter Button -->
+                        <button type="submit" class="btn btn-terracotta w-100 py-2 rounded-pill fw-semibold small shadow-sm d-flex align-items-center justify-content-center gap-2">
+                            <i class="bi bi-check2"></i>
+                            <span>Áp Dụng Bộ Lọc</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. RIGHT COLUMN: BOOK GRID & PAGINATION -->
+        <div class="col-lg-9">
+            <!-- Top Control Bar: Results Count & Sort Dropdown -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4" style="border: 1px solid rgba(222, 192, 183, 0.45) !important; background-color: #ffffff;">
+                <div class="card-body p-3 px-4 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                    <div class="small text-muted">
+                        Hiển thị <strong class="text-dark">@startItem - @endItem</strong> trong tổng số <strong class="text-terracotta">@Model.Books.TotalCount</strong> tác phẩm
+                        @if (!string.IsNullOrWhiteSpace(Model.SearchString))
+                        {
+                            <span>với từ khóa: <em class="text-dark">"@Model.SearchString"</em></span>
+                        }
+                    </div>
+
+                    <!-- Sort Select -->
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="small text-muted text-nowrap mb-0">Sắp xếp:</label>
+                        <select class="form-select form-select-sm rounded-pill small border" style="width: auto; min-width: 170px; border-color: rgba(222, 192, 183, 0.7) !important;" onchange="applySort(this.value)">
+                            <option value="newest" selected="@(Model.SortBy == "newest" || string.IsNullOrEmpty(Model.SortBy))">Mới Nhất</option>
+                            <option value="price_asc" selected="@(Model.SortBy == "price_asc")">Giá: Thấp đến Cao</option>
+                            <option value="price_desc" selected="@(Model.SortBy == "price_desc")">Giá: Cao đến Thấp</option>
+                            <option value="bestseller" selected="@(Model.SortBy == "bestseller")">Bán Chạy Nhất</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Books Grid -->
+            @if (Model.Books.Items.Any())
+            {
+                <div class="row g-4">
+                    @foreach (var book in Model.Books.Items)
+                    {
+                        var discountPercent = book.ListPrice > book.Price && book.ListPrice > 0
+                            ? Math.Round((1 - (book.Price / book.ListPrice)) * 100)
+                            : 0;
+
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <div class="book-card h-100 d-flex flex-column bg-white p-3 rounded-4 shadow-sm border" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                                <!-- Cover Image -->
+                                <div class="book-cover-container mb-3 position-relative rounded-3 overflow-hidden" style="aspect-ratio: 1 / 1.4; background-color: var(--bg-surface-low);">
+                                    @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                    {
+                                        <img src="@book.ImageUrl" alt="@book.Title" class="w-100 h-100 object-fit-cover" onerror="this.onerror=null; this.src=''; this.parentElement.innerHTML='<div class=\'w-100 h-100 d-flex align-items-center justify-content-center text-muted\'><i class=\'bi bi-book fs-1\'></i></div>';" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-surface-low text-terracotta">
+                                            <i class="bi bi-book fs-1 opacity-50"></i>
+                                        </div>
+                                    }
+                                    <div class="book-spine-crease"></div>
+
+                                    @if (book.StockQuantity <= 5 && book.StockQuantity > 0)
+                                    {
+                                        <span class="position-absolute top-0 start-0 m-2 badge bg-warning text-dark rounded-pill px-2 py-1 small fw-bold">Sắp hết hàng</span>
+                                    }
+                                    else if (book.StockQuantity <= 0)
+                                    {
+                                        <span class="position-absolute top-0 start-0 m-2 badge bg-danger text-white rounded-pill px-2 py-1 small fw-bold">Hết hàng</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="position-absolute top-0 start-0 m-2 badge bg-terracotta text-white rounded-pill px-2 py-1 small fw-bold">
+                                            @(book.Category?.Name ?? "Văn Học")
+                                        </span>
+                                    }
+
+                                    @if (discountPercent > 0)
+                                    {
+                                        <span class="position-absolute top-0 end-0 m-2 badge bg-danger text-white rounded-pill px-2 py-1 small fw-bold">
+                                            -@discountPercent%
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- Book Info -->
+                                <div class="d-flex align-items-center gap-1 text-terracotta small mb-1">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span class="fw-bold text-dark">5.0</span>
+                                    <span class="text-muted">(Kho: @book.StockQuantity)</span>
+                                </div>
+                                <h5 class="font-serif fw-bold text-dark fs-6 text-truncate mb-1" title="@book.Title">@book.Title</h5>
+                                <p class="small text-muted mb-3 text-truncate"><i class="bi bi-feather me-1"></i>@book.Author</p>
+
+                                <!-- Bottom Price & Add to Cart -->
+                                <div class="mt-auto d-flex align-items-center justify-content-between pt-2 border-top" style="border-color: rgba(222, 192, 183, 0.3) !important;">
+                                    <div>
+                                        <div class="fw-bold text-terracotta fs-5">@book.Price.ToString("#,##0") ₫</div>
+                                        @if (book.ListPrice > book.Price)
+                                        {
+                                            <small class="text-muted text-decoration-line-through">@book.ListPrice.ToString("#,##0") ₫</small>
+                                        }
+                                    </div>
+                                    @if (book.StockQuantity > 0)
+                                    {
+                                        <a asp-controller="Cart" asp-action="AddToCart" asp-route-bookId="@book.Id" class="btn btn-sm btn-terracotta rounded-pill px-3 d-flex align-items-center gap-1 shadow-xs" title="Thêm vào giỏ">
+                                            <i class="bi bi-bag-plus"></i> + Giỏ
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-secondary rounded-pill px-3 disabled">Hết hàng</button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- C. Pagination Navigation -->
+                @if (Model.Books.TotalPages > 1)
+                {
+                    <div class="d-flex justify-content-center mt-5">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination pagination-rounded gap-1">
+                                <!-- Previous Page Link -->
+                                <li class="page-item @(!Model.Books.HasPreviousPage ? "disabled" : "")">
+                                    <a class="page-link rounded-pill px-3 text-dark border" 
+                                       asp-action="Shop" 
+                                       asp-route-page="@(Model.Books.PageIndex - 1)"
+                                       asp-route-searchString="@Model.SearchString"
+                                       asp-route-categoryId="@Model.CategoryId"
+                                       asp-route-minPrice="@Model.MinPrice"
+                                       asp-route-maxPrice="@Model.MaxPrice"
+                                       asp-route-sortBy="@Model.SortBy"
+                                       asp-route-pageSize="@Model.PageSize"
+                                       style="border-color: rgba(222, 192, 183, 0.6) !important;">
+                                        <i class="bi bi-chevron-left me-1"></i>Trước
+                                    </a>
+                                </li>
+
+                                <!-- Page Number Buttons -->
+                                @for (int p = 1; p <= Model.Books.TotalPages; p++)
+                                {
+                                    var isActive = p == Model.Books.PageIndex;
+                                    <li class="page-item @(isActive ? "active" : "")">
+                                        <a class="page-link rounded-circle d-flex align-items-center justify-content-center @(isActive ? "bg-terracotta text-white border-0 shadow-sm" : "text-dark border")" 
+                                           style="width: 38px; height: 38px; border-color: rgba(222, 192, 183, 0.6) !important;"
+                                           asp-action="Shop" 
+                                           asp-route-page="@p"
+                                           asp-route-searchString="@Model.SearchString"
+                                           asp-route-categoryId="@Model.CategoryId"
+                                           asp-route-minPrice="@Model.MinPrice"
+                                           asp-route-maxPrice="@Model.MaxPrice"
+                                           asp-route-sortBy="@Model.SortBy"
+                                           asp-route-pageSize="@Model.PageSize">
+                                            @p
+                                        </a>
+                                    </li>
+                                }
+
+                                <!-- Next Page Link -->
+                                <li class="page-item @(!Model.Books.HasNextPage ? "disabled" : "")">
+                                    <a class="page-link rounded-pill px-3 text-dark border" 
+                                       asp-action="Shop" 
+                                       asp-route-page="@(Model.Books.PageIndex + 1)"
+                                       asp-route-searchString="@Model.SearchString"
+                                       asp-route-categoryId="@Model.CategoryId"
+                                       asp-route-minPrice="@Model.MinPrice"
+                                       asp-route-maxPrice="@Model.MaxPrice"
+                                       asp-route-sortBy="@Model.SortBy"
+                                       asp-route-pageSize="@Model.PageSize"
+                                       style="border-color: rgba(222, 192, 183, 0.6) !important;">
+                                        Sau<i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Empty State -->
+                <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+                    <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center shadow-sm mb-3 mx-auto" style="width: 80px; height: 80px; font-size: 2.2rem;">
+                        <i class="bi bi-search"></i>
+                    </div>
+                    <h4 class="font-serif fw-bold text-dark mb-2">Không Tìm Thấy Ấn Phẩm Phù Hợp</h4>
+                    <p class="text-muted small mb-4" style="max-width: 440px; margin: 0 auto; line-height: 1.6;">
+                        Không có cuốn sách nào khớp với từ khóa tìm kiếm hoặc khoảng giá đã chọn. Hãy thử tìm từ khóa khác hoặc xóa bớt bộ lọc.
+                    </p>
+                    <div>
+                        <a asp-action="Shop" class="btn btn-terracotta rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span>Xem Toàn Bộ Sách</span>
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function setPrice(min, max) {
+            document.getElementById('minPriceInput').value = min !== null ? min : '';
+            document.getElementById('maxPriceInput').value = max !== null ? max : '';
+            document.getElementById('filterForm').submit();
+        }
+
+        function applySort(sortVal) {
+            document.getElementById('hiddenSortBy').value = sortVal;
+            document.getElementById('filterForm').submit();
+        }
+    </script>
+}

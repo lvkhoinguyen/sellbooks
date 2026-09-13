@@ -219,6 +219,9 @@
                                     <!-- Actions -->
                                     <td class="pe-4 py-3 text-end">
                                         <div class="btn-group shadow-sm rounded-pill overflow-hidden" role="group">
+                                            <a asp-controller="Cart" asp-action="AddToCart" asp-route-bookId="@book.Id" class="btn btn-sm btn-outline-success px-3" title="Thêm vào giỏ hàng">
+                                                <i class="bi bi-bag-plus me-1"></i>+ Giỏ
+                                            </a>
                                             <a asp-controller="Book" asp-action="Upsert" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary px-3" title="Chỉnh sửa sách">
                                                 <i class="bi bi-pencil-square me-1"></i>Sửa
                                             </a>

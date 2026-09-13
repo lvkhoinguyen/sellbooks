@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebBanSach.Data;
 
@@ -11,9 +12,11 @@ using WebBanSach.Data;
 namespace WebBanSach.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260913161902_AddOrderHeaderAndDetailToDb")]
+    partial class AddOrderHeaderAndDetailToDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -309,51 +312,6 @@ namespace WebBanSach.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("WebBanSach.Models.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<int>("DiscountType")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("DiscountValue")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<decimal>("MinOrderAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("TimesUsed")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsageLimit")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.ToTable("Coupons");
-                });
-
             modelBuilder.Entity("WebBanSach.Models.OrderDetail", b =>
                 {
                     b.Property<int>("Id")
@@ -402,12 +360,6 @@ namespace WebBanSach.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
-
-                    b.Property<string>("CouponCode")
-                        .HasColumnType("longtext");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Name")
                         .IsRequired()
