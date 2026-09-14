@@ -1,0 +1,268 @@
+@model IEnumerable<Coupon>
+@{
+    ViewData["Title"] = "Quản Lý Mã Giảm Giá (Vouchers)";
+    int totalCoupons = Model?.Count() ?? 0;
+    int activeCoupons = Model?.Count(c => c.IsActive && c.EndDate >= DateTime.UtcNow && c.TimesUsed < c.UsageLimit) ?? 0;
+    int totalTimesUsed = Model?.Sum(c => c.TimesUsed) ?? 0;
+}
+
+<div class="container px-4 px-lg-5 py-4">
+    <!-- Breadcrumb & Page Heading -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb" class="mb-2">
+                <ol class="breadcrumb mb-0 small">
+                    <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none"><i class="bi bi-house-door me-1"></i>Trang Chủ</a></li>
+                    <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">Mã Giảm Giá</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-3">
+                <span class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 46px; height: 46px; font-size: 1.3rem;">
+                    <i class="bi bi-ticket-perforated-fill"></i>
+                </span>
+                <div>
+                    <h2 class="font-serif fw-bold text-dark mb-0 fs-3">Quản Lý Mã Giảm Giá &amp; Vouchers</h2>
+                    <p class="text-muted small mb-0">Hệ thống khuyến mại, coupon ưu đãi dành cho độc giả PageCraft</p>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <a asp-controller="Coupon" asp-action="Upsert" class="btn btn-terracotta d-inline-flex align-items-center gap-2 shadow-sm">
+                <i class="bi bi-plus-circle-fill fs-6"></i>
+                <span>Tạo Mã Giảm Giá Mới</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-terracotta d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-tags-fill"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Tổng Số Mã</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">@totalCoupons <small class="fs-6 fw-normal text-muted">mã ưu đãi</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-success d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-patch-check-fill"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Đang Có Hiệu Lực</span>
+                    <h4 class="font-serif fw-bold text-success mb-0">@activeCoupons <small class="fs-6 fw-normal text-muted">mã hoạt động</small></h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="p-3 bg-white rounded-4 shadow-sm border d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.45) !important;">
+                <div class="rounded-circle bg-surface-low text-primary d-flex align-items-center justify-content-center fs-4" style="width: 48px; height: 48px;">
+                    <i class="bi bi-cart-check-fill"></i>
+                </div>
+                <div>
+                    <span class="text-muted small text-uppercase fw-semibold" style="font-size: 0.75rem; letter-spacing: 0.05em;">Lượt Áp Dụng Thành Công</span>
+                    <h4 class="font-serif fw-bold text-dark mb-0">@totalTimesUsed.ToString("#,##0") <small class="fs-6 fw-normal text-muted">lượt</small></h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex justify-content-between align-items-center" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <span class="fw-bold text-dark font-serif fs-5 mb-0">Danh Sách Voucher &amp; Mã Khuyến Mại</span>
+            <span class="badge rounded-pill bg-white text-muted border px-3 py-2 small" style="border-color: rgba(222, 192, 183, 0.6) !important;">
+                <i class="bi bi-shield-check text-success me-1"></i>Bảo vệ giới hạn &amp; thời hạn tự động
+            </span>
+        </div>
+
+        <div class="card-body p-0 bg-white">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" style="background-color: #ffffff;">
+                    <thead style="background-color: var(--bg-surface-low);">
+                        <tr>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 18%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Mã Khuyến Mại</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 22%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Mức Giảm &amp; Điều Kiện</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 22%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Thời Gian Áp Dụng</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase" style="width: 16%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Lượt Dùng</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase text-center" style="width: 10%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Kích Hoạt</th>
+                            <th class="py-3 px-4 text-muted small fw-bold text-uppercase text-end" style="width: 12%; background-color: var(--bg-surface-low); border-bottom: 1px solid rgba(222, 192, 183, 0.5);">Thao Tác</th>
+                        </tr>
+                    </thead>
+                    <tbody style="background-color: #ffffff;">
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                bool isExpired = DateTime.UtcNow > item.EndDate;
+                                bool isLimitReached = item.TimesUsed >= item.UsageLimit;
+                                bool isNotStarted = DateTime.UtcNow < item.StartDate;
+
+                                <tr>
+                                    <!-- Coupon Code -->
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                                <i class="bi bi-tag-fill"></i>
+                                            </span>
+                                            <div>
+                                                <span class="fw-bold font-monospace text-dark fs-6 d-block text-uppercase">@item.Code</span>
+                                                <small class="text-muted" style="font-size: 0.72rem;">ID: #@item.Id</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Discount & Conditions -->
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <div>
+                                            @if (item.DiscountType == DiscountType.Percentage)
+                                            {
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle fw-semibold px-2 py-1">
+                                                    <i class="bi bi-percent me-1"></i>Giảm @item.DiscountValue%
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-semibold px-2 py-1">
+                                                    <i class="bi bi-cash me-1"></i>Giảm @item.DiscountValue.ToString("#,##0")₫
+                                                </span>
+                                            }
+
+                                            <div class="small text-muted mt-1" style="font-size: 0.78rem;">
+                                                @if (item.MinOrderAmount > 0)
+                                                {
+                                                    <span>Đơn tối thiểu: <strong>@item.MinOrderAmount.ToString("#,##0")₫</strong></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">Không giới hạn đơn tối thiểu</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Validity Period -->
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <div class="small">
+                                            <div class="text-dark">
+                                                <i class="bi bi-calendar-event me-1 text-muted"></i>@item.StartDate.ToString("dd/MM/yyyy") - @item.EndDate.ToString("dd/MM/yyyy")
+                                            </div>
+                                            <div class="mt-1">
+                                                @if (isExpired)
+                                                {
+                                                    <span class="badge rounded-pill bg-danger-subtle text-danger border border-danger-subtle" style="font-size: 0.68rem;">Hết hạn</span>
+                                                }
+                                                else if (isNotStarted)
+                                                {
+                                                    <span class="badge rounded-pill bg-secondary-subtle text-secondary border" style="font-size: 0.68rem;">Chưa bắt đầu</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle" style="font-size: 0.68rem;">Còn hiệu lực</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Usage Limit & Progress -->
+                                    <td class="py-3 px-4" style="background-color: #ffffff;">
+                                        <div>
+                                            <div class="d-flex justify-content-between small mb-1">
+                                                <span class="fw-semibold @(isLimitReached ? "text-danger" : "text-dark")">@item.TimesUsed</span>
+                                                <span class="text-muted">/ @item.UsageLimit</span>
+                                            </div>
+                                            @{
+                                                int usagePercent = item.UsageLimit > 0 ? (int)Math.Min(100, Math.Round((double)item.TimesUsed / item.UsageLimit * 100)) : 0;
+                                            }
+                                            <div class="progress" style="height: 6px;">
+                                                <div class="progress-bar @(isLimitReached ? "bg-danger" : "bg-terracotta")" role="progressbar" style="width: @usagePercent%;" aria-valuenow="@usagePercent" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Active Status Toggle -->
+                                    <td class="py-3 px-4 text-center" style="background-color: #ffffff;">
+                                        <div class="form-check form-switch d-inline-block">
+                                            <input class="form-check-input status-toggle" type="checkbox" role="switch" data-id="@item.Id" @(item.IsActive ? "checked" : "") style="cursor: pointer;" title="Bật/Tắt kích hoạt" />
+                                        </div>
+                                    </td>
+
+                                    <!-- Actions -->
+                                    <td class="py-3 px-4 text-end" style="background-color: #ffffff;">
+                                        <div class="d-inline-flex align-items-center gap-2">
+                                            <a asp-controller="Coupon" asp-action="Upsert" asp-route-id="@item.Id" class="btn btn-sm btn-outline-terracotta d-inline-flex align-items-center gap-1 shadow-none" title="Chỉnh sửa">
+                                                <i class="bi bi-pencil-square"></i>
+                                                <span>Sửa</span>
+                                            </a>
+                                            <form method="post" asp-controller="Coupon" asp-action="Delete" asp-route-id="@item.Id" onsubmit="return confirm('Bạn có chắc chắn muốn xóa mã giảm giá \'@item.Code\' không?');" class="d-inline">
+                                                <button type="submit" class="btn btn-sm rounded-pill px-2 d-inline-flex align-items-center gap-1 text-decoration-none shadow-none" style="background-color: rgba(200, 30, 30, 0.08); color: #c00; border: 1px solid rgba(200, 30, 30, 0.25);" title="Xóa">
+                                                    <i class="bi bi-trash3"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center py-5 bg-white">
+                                    <div class="py-4">
+                                        <div class="rounded-circle bg-surface-low text-terracotta d-inline-flex align-items-center justify-content-center mb-3" style="width: 64px; height: 64px;">
+                                            <i class="bi bi-ticket-detailed fs-2 opacity-75"></i>
+                                        </div>
+                                        <h5 class="font-serif fw-bold text-dark mb-1">Chưa có mã giảm giá nào</h5>
+                                        <p class="text-muted small mb-3">Tạo các mã khuyến mãi hấp dẫn để tri ân khách hàng và tăng doanh thu.</p>
+                                        <a asp-controller="Coupon" asp-action="Upsert" class="btn btn-sm btn-terracotta">
+                                            <i class="bi bi-plus-circle me-1"></i> Tạo Mã Đầu Tiên
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.status-toggle').forEach(el => {
+            el.addEventListener('change', async function() {
+                const id = this.getAttribute('data-id');
+                const isChecked = this.checked;
+
+                try {
+                    const formData = new FormData();
+                    formData.append('id', id);
+
+                    const res = await fetch('@Url.Action("ToggleStatus", "Coupon")', {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                        if (window.toastr) toastr.success(data.message);
+                    } else {
+                        if (window.toastr) toastr.error(data.message || 'Lỗi cập nhật trạng thái');
+                        this.checked = !isChecked;
+                    }
+                } catch {
+                    if (window.toastr) toastr.error('Không thể kết nối đến máy chủ');
+                    this.checked = !isChecked;
+                }
+            });
+        });
+    </script>
+}

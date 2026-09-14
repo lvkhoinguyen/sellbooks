@@ -195,7 +195,7 @@
                                             <small class="d-block text-success" style="font-size: 0.75rem;">Đã giảm @Model.DiscountAmount.ToString("#,##0")₫</small>
                                         </div>
                                     </div>
-                                    <form method="post" asp-action="RemoveCoupon" class="d-inline">
+                                    <form method="post" asp-action="RemoveCoupon" id="removeCouponForm" class="d-inline">
                                         <button type="submit" class="btn btn-sm btn-outline-danger border-0 rounded-circle p-1" title="Hủy mã giảm giá">
                                             <i class="bi bi-x-lg"></i>
                                         </button>
@@ -310,6 +310,7 @@
 
 @section Scripts {
     <script>
+        // Gợi ý mã giảm giá nhanh
         document.querySelectorAll('.coupon-suggestion-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const code = this.getAttribute('data-code');
@@ -320,5 +321,81 @@
                 }
             });
         });
+
+        // Xử lý áp dụng mã giảm giá qua AJAX
+        const couponForm = document.getElementById('couponForm');
+        if (couponForm) {
+            couponForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const input = document.getElementById('couponCodeInput');
+                const code = input ? input.value.trim() : '';
+                if (!code) {
+                    if (window.toastr) toastr.warning('Vui lòng nhập mã giảm giá.');
+                    return;
+                }
+
+                const submitBtn = couponForm.querySelector('button[type="submit"]');
+                const origHtml = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Đang áp dụng...';
+
+                try {
+                    const formData = new FormData();
+                    formData.append('couponCode', code);
+
+                    const res = await fetch('@Url.Action("ApplyCoupon", "Cart")', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+
+                    const data = await res.json();
+                    if (data.success) {
+                        if (window.toastr) {
+                            toastr.success(data.message);
+                        }
+                        setTimeout(() => window.location.reload(), 500);
+                    } else {
+                        if (window.toastr) {
+                            toastr.error(data.message || 'Mã giảm giá không hợp lệ!');
+                        } else {
+                            alert(data.message || 'Mã giảm giá không hợp lệ!');
+                        }
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = origHtml;
+                    }
+                } catch (err) {
+                    // Dự phòng submit form nếu AJAX gặp sự cố mạng
+                    couponForm.submit();
+                }
+            });
+        }
+
+        // Xử lý hủy mã giảm giá qua AJAX
+        const removeCouponForm = document.getElementById('removeCouponForm');
+        if (removeCouponForm) {
+            removeCouponForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                try {
+                    const res = await fetch('@Url.Action("RemoveCoupon", "Cart")', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        if (window.toastr) toastr.info(data.message);
+                        setTimeout(() => window.location.reload(), 400);
+                    } else {
+                        removeCouponForm.submit();
+                    }
+                } catch {
+                    removeCouponForm.submit();
+                }
+            });
+        }
     </script>
 }

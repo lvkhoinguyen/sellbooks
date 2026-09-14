@@ -1,0 +1,170 @@
+@model Coupon
+@{
+    bool isEdit = Model.Id != 0;
+    ViewData["Title"] = isEdit ? "Cập Nhật Mã Giảm Giá" : "Tạo Mã Giảm Giá Mới";
+}
+
+<div class="container px-4 px-lg-5 py-4" style="max-width: 900px;">
+    <!-- Breadcrumb & Header -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0 small">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-muted text-decoration-none"><i class="bi bi-house-door me-1"></i>Trang Chủ</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Coupon" asp-action="Index" class="text-muted text-decoration-none">Mã Giảm Giá</a></li>
+            <li class="breadcrumb-item active text-terracotta fw-semibold" aria-current="page">@(isEdit ? "Chỉnh Sửa" : "Tạo Mới")</li>
+        </ol>
+    </nav>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="border: 1px solid rgba(222, 192, 183, 0.45) !important;">
+        <!-- Card Header -->
+        <div class="card-header bg-surface-low border-bottom py-3 px-4 d-flex align-items-center gap-3" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+            <div class="rounded-circle bg-terracotta text-white d-inline-flex align-items-center justify-content-center shadow-sm" style="width: 42px; height: 42px; font-size: 1.2rem;">
+                <i class="bi bi-ticket-perforated-fill"></i>
+            </div>
+            <div>
+                <h4 class="font-serif fw-bold text-dark mb-0">@(isEdit ? $"Chỉnh Sửa Mã \"{Model.Code}\"" : "Tạo Mã Giảm Giá Mới")</h4>
+                <small class="text-muted">Thiết lập các điều kiện áp dụng, thời hạn và mức chiết khấu cho khách hàng</small>
+            </div>
+        </div>
+
+        <!-- Form Body -->
+        <div class="card-body p-4 bg-white">
+            <form method="post" asp-action="Upsert">
+                <input type="hidden" asp-for="Id" />
+                @if (isEdit)
+                {
+                    <input type="hidden" asp-for="TimesUsed" />
+                }
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-3 small py-2 mb-4" role="alert"></div>
+
+                <div class="row g-3 mb-4">
+                    <!-- Mã Coupon -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="Code" class="form-label fw-semibold text-dark small"></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-surface-low text-terracotta"><i class="bi bi-tag-fill"></i></span>
+                            <input asp-for="Code" class="form-control text-uppercase font-monospace fw-bold" placeholder="Ví dụ: READMORE, SALE2026" autofocus />
+                        </div>
+                        <span asp-validation-for="Code" class="text-danger small"></span>
+                        <div class="form-text small" style="font-size: 0.75rem;">Mã code viết liền, không dấu (hệ thống tự động chuyển thành in hoa).</div>
+                    </div>
+
+                    <!-- Loại Giảm Giá -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="DiscountType" class="form-label fw-semibold text-dark small"></label>
+                        <select asp-for="DiscountType" class="form-select" id="discountTypeSelect">
+                            <option value="0">Phần trăm (%) - Ví dụ 10%</option>
+                            <option value="1">Số tiền cố định (₫) - Ví dụ 50.000₫</option>
+                        </select>
+                        <span asp-validation-for="DiscountType" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Giá Trị Giảm -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="DiscountValue" class="form-label fw-semibold text-dark small"></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-surface-low text-muted" id="discountUnitIcon">%</span>
+                            <input asp-for="DiscountValue" type="number" step="0.01" min="0.01" class="form-control" placeholder="10" />
+                        </div>
+                        <span asp-validation-for="DiscountValue" class="text-danger small"></span>
+                        <div class="form-text small" id="discountValueHelp" style="font-size: 0.75rem;">Nếu là %, nhập từ 1 đến 100. Nếu là tiền cố định, nhập số tiền (ví dụ: 50000).</div>
+                    </div>
+
+                    <!-- Đơn Hàng Tối Thiểu -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="MinOrderAmount" class="form-label fw-semibold text-dark small"></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-surface-low text-muted">₫</span>
+                            <input asp-for="MinOrderAmount" type="number" step="1000" min="0" class="form-control" placeholder="100000" />
+                        </div>
+                        <span asp-validation-for="MinOrderAmount" class="text-danger small"></span>
+                        <div class="form-text small" style="font-size: 0.75rem;">Đơn hàng phải đạt tối thiểu mức này để áp dụng mã (0 = không giới hạn).</div>
+                    </div>
+
+                    <!-- Ngày Bắt Đầu -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="StartDate" class="form-label fw-semibold text-dark small"></label>
+                        <input asp-for="StartDate" type="datetime-local" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-ddTHH:mm")" />
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Ngày Kết Thúc -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="EndDate" class="form-label fw-semibold text-dark small"></label>
+                        <input asp-for="EndDate" type="datetime-local" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-ddTHH:mm")" />
+                        <span asp-validation-for="EndDate" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Giới Hạn Lượt Dùng -->
+                    <div class="col-12 col-md-6">
+                        <label asp-for="UsageLimit" class="form-label fw-semibold text-dark small"></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-surface-low text-muted"><i class="bi bi-people-fill"></i></span>
+                            <input asp-for="UsageLimit" type="number" min="1" class="form-control" placeholder="100" />
+                        </div>
+                        <span asp-validation-for="UsageLimit" class="text-danger small"></span>
+                        <div class="form-text small" style="font-size: 0.75rem;">Tổng số lần mã có thể được sử dụng trước khi hết hiệu lực.</div>
+                    </div>
+
+                    <!-- Số lượt đã dùng (nếu đang chỉnh sửa) -->
+                    @if (isEdit)
+                    {
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold text-dark small">Số Lượt Đã Sử Dụng</label>
+                            <input type="text" class="form-control bg-light" value="@Model.TimesUsed lần" disabled readonly />
+                            <div class="form-text small" style="font-size: 0.75rem;">Cập nhật tự động mỗi khi có đơn hàng thanh toán thành công.</div>
+                        </div>
+                    }
+
+                    <!-- Trạng Thái Kích Hoạt -->
+                    <div class="col-12">
+                        <div class="p-3 rounded-3 bg-surface-low border d-flex align-items-center justify-content-between" style="border-color: rgba(222, 192, 183, 0.5) !important;">
+                            <div>
+                                <label asp-for="IsActive" class="form-check-label fw-semibold text-dark mb-0 d-block">Kích hoạt mã giảm giá ngay</label>
+                                <small class="text-muted" style="font-size: 0.78rem;">Khi tắt, người mua sẽ không thể áp dụng mã này kể cả khi còn thời hạn.</small>
+                            </div>
+                            <div class="form-check form-switch fs-4 mb-0">
+                                <input asp-for="IsActive" class="form-check-input" type="checkbox" role="switch" style="cursor: pointer;" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex align-items-center justify-content-between pt-3 border-top" style="border-color: rgba(222, 192, 183, 0.4) !important;">
+                    <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+                        <i class="bi bi-arrow-left me-1"></i>Quay Lại Danh Sách
+                    </a>
+                    <button type="submit" class="btn btn-terracotta rounded-pill px-4 py-2 shadow-sm d-inline-flex align-items-center gap-2 text-white">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>@(isEdit ? "Cập Nhật Mã" : "Tạo Mã Giảm Giá")</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        const discountTypeSelect = document.getElementById('discountTypeSelect');
+        const unitIcon = document.getElementById('discountUnitIcon');
+        const helpText = document.getElementById('discountValueHelp');
+
+        function updateDiscountUi() {
+            if (discountTypeSelect.value === '0') {
+                unitIcon.textContent = '%';
+                helpText.textContent = 'Mức giảm theo tỷ lệ % trên tổng tiền sách (1% - 100%).';
+            } else {
+                unitIcon.textContent = '₫';
+                helpText.textContent = 'Mức giảm số tiền cố định trực tiếp (ví dụ: 50000 = 50.000₫).';
+            }
+        }
+
+        if (discountTypeSelect) {
+            discountTypeSelect.addEventListener('change', updateDiscountUi);
+            updateDiscountUi();
+        }
+    </script>
+}

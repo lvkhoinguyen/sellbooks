@@ -531,44 +531,463 @@ thead.bg-light th {
   100% { transform: translate3d(-20px, 25px, 0) scale(0.94); }
 }
 
-.hero-book-stage {
-  perspective: 1200px;
-  transform-style: preserve-3d;
+/* ===================================================
+   2. INTERACTIVE 3D BOOK SHOWCASE (CSS 3D Engine)
+   =================================================== */
+.hero-3d-book-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
-.hero-book-3d {
+.hero-3d-stage {
+  position: relative;
+  perspective: 1600px;
+  transform-style: preserve-3d;
+  width: 320px;
+  height: 420px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  cursor: -webkit-grab;
+  user-select: none;
+  touch-action: none; /* Ngăn scroll khi đang drag sách trên mobile */
+}
+
+.hero-3d-stage:active {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
+}
+
+.book-3d-rig {
+  position: relative;
+  width: 260px;
+  height: 360px;
   transform-style: preserve-3d;
   will-change: transform;
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease;
-  animation: bookSubtleFloat 6s ease-in-out infinite alternate;
+  transform: rotateX(10deg) rotateY(-22deg);
+  transition: box-shadow 0.3s ease;
 }
 
-@keyframes bookSubtleFloat {
-  0% {
-    transform: translateY(0px) rotateY(-5deg) rotateX(3deg);
+/* Dynamic Ambient Drop Shadow */
+.book-3d-shadow {
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  width: 270px;
+  height: 48px;
+  border-radius: 50%;
+  transform: translateX(-50%) rotateX(85deg) translateZ(-60px);
+  background: radial-gradient(ellipse at center, rgba(35, 30, 26, 0.48) 0%, rgba(43, 40, 37, 0.2) 50%, transparent 75%);
+  filter: blur(14px);
+  pointer-events: none;
+  transition: transform 0.25s ease, opacity 0.25s ease, filter 0.25s ease;
+}
+
+.book-opened .book-3d-shadow {
+  width: 480px;
+  height: 52px;
+  transform: translateX(-40%) rotateX(85deg) translateZ(-60px);
+  filter: blur(18px);
+  opacity: 0.85;
+}
+
+/* Complete 3D Book Object */
+.book-3d-model {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  cursor: pointer;
+}
+
+/* Common Book Face Properties */
+.book-face {
+  position: absolute;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* 1. Back Cover */
+.book-back-cover {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: #7a3114;
+  border-radius: 3px 10px 10px 3px;
+  transform: translateZ(-18px);
+  box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+  color: #eedcc6;
+}
+
+.book-back-inner {
+  border-top: 1px solid rgba(238, 220, 198, 0.25);
+  padding-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.book-barcode-area {
+  background: #ffffff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  color: #1a1a1a;
+}
+
+.barcode-lines {
+  height: 22px;
+  width: 90px;
+  background: repeating-linear-gradient(to right, #000 0px, #000 2px, #fff 2px, #fff 3px, #000 3px, #000 5px, #fff 5px, #fff 6px, #000 6px, #000 9px);
+}
+
+.barcode-text {
+  font-family: monospace;
+  font-size: 0.6rem;
+  display: block;
+  text-align: center;
+  margin-top: 2px;
+  font-weight: bold;
+}
+
+.book-publisher-tag {
+  font-size: 0.72rem;
+  opacity: 0.85;
+  font-weight: 500;
+}
+
+/* 2. Spine (Gáy sách 3D) */
+.book-spine {
+  width: 36px;
+  height: 100%;
+  left: -18px;
+  top: 0;
+  transform: rotateY(-90deg);
+  transform-origin: center;
+  background: linear-gradient(90deg, #57200c 0%, #9e431e 40%, #8b3c1b 70%, #57200c 100%);
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.spine-content {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 90%;
+  color: #f7e1b5;
+  letter-spacing: 0.14em;
+}
+
+.spine-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.spine-author {
+  font-size: 0.62rem;
+  opacity: 0.85;
+  font-family: sans-serif;
+}
+
+.spine-logo {
+  font-size: 0.9rem;
+}
+
+/* 3. Pages Block (Paper Edges 3D) */
+.book-pages-right {
+  width: 34px;
+  height: calc(100% - 10px);
+  top: 5px;
+  right: -17px;
+  transform: rotateY(90deg);
+  transform-origin: center;
+  background: repeating-linear-gradient(to bottom, #fcf8ee 0px, #fcf8ee 1px, #e7ddc7 2px, #d3c7ad 3px);
+  box-shadow: inset 4px 0 8px rgba(0, 0, 0, 0.18);
+  border-radius: 2px;
+}
+
+.book-pages-top {
+  width: calc(100% - 12px);
+  height: 34px;
+  top: -17px;
+  left: 6px;
+  transform: rotateX(90deg);
+  transform-origin: center;
+  background: repeating-linear-gradient(to right, #fcf8ee 0px, #fcf8ee 1px, #e7ddc7 2px, #d3c7ad 3px);
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.18);
+}
+
+.book-pages-bottom {
+  width: calc(100% - 12px);
+  height: 34px;
+  bottom: -17px;
+  left: 6px;
+  transform: rotateX(-90deg);
+  transform-origin: center;
+  background: repeating-linear-gradient(to right, #fcf8ee 0px, #fcf8ee 1px, #e7ddc7 2px, #d3c7ad 3px);
+  box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.22);
+}
+
+/* 4. Inside Spread (Revealed when Front Cover is opened) */
+.book-inside-spread {
+  width: calc(100% - 6px);
+  height: calc(100% - 8px);
+  top: 4px;
+  left: 3px;
+  transform: translateZ(16px);
+  background: #fcf9f2;
+  border-radius: 2px 8px 8px 2px;
+  padding: 22px 18px;
+  box-shadow: inset 18px 0 25px rgba(0, 0, 0, 0.12), 2px 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(222, 192, 183, 0.4);
+  z-index: 1;
+}
+
+.inside-page-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: left;
+}
+
+.inside-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(222, 192, 183, 0.4);
+  padding-bottom: 6px;
+}
+
+.editorial-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  letter-spacing: 0.08em;
+}
+
+.inside-stars {
+  font-size: 0.65rem;
+}
+
+.inside-title {
+  font-size: 1.12rem;
+  font-weight: 700;
+  color: #2b2825;
+  margin-top: 8px;
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.inside-author {
+  font-size: 0.78rem;
+  color: #7d756d;
+  margin-bottom: 8px;
+}
+
+.inside-quote {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #443e39;
+  font-style: italic;
+  margin: 0;
+  padding: 8px 10px;
+  background: rgba(200, 90, 50, 0.06);
+  border-left: 3px solid var(--color-primary);
+  border-radius: 0 6px 6px 0;
+}
+
+.inside-pricing {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(222, 192, 183, 0.6);
+}
+
+.inside-pricing .price-val {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--color-primary);
+}
+
+.inside-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* 5. Front Cover Wrapper (Hinged left) */
+.book-front-cover-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: left center;
+  transform-style: preserve-3d;
+  transform: translateZ(18px) rotateY(0deg);
+  transition: transform 0.85s cubic-bezier(0.18, 0.89, 0.32, 1.12);
+  z-index: 10;
+}
+
+.book-opened .book-front-cover-wrapper {
+  transform: translateZ(18px) rotateY(-165deg);
+}
+
+.book-cover-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 3px 10px 10px 3px;
+  overflow: hidden;
+}
+
+.book-cover-front {
+  z-index: 2;
+  box-shadow: 4px 4px 18px rgba(0, 0, 0, 0.25), inset 0 0 15px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover-art {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cover-gold-foil-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 215, 0, 0.08) 35%, transparent 60%, rgba(255, 255, 255, 0.15) 100%);
+  pointer-events: none;
+}
+
+.cover-click-hint {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: rgba(43, 40, 37, 0.78);
+  backdrop-filter: blur(4px);
+  color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.book-3d-model:hover .cover-click-hint {
+  background: var(--color-primary);
+  transform: scale(1.05);
+}
+
+.book-opened .cover-click-hint {
+  display: none;
+}
+
+/* Inner Face of Front Cover */
+.book-cover-inner {
+  transform: rotateY(180deg);
+  background: #f4ede2;
+  box-shadow: inset -18px 0 25px rgba(0, 0, 0, 0.16);
+  border-radius: 10px 3px 3px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(222, 192, 183, 0.4);
+}
+
+.inner-cover-marbling {
+  width: 86%;
+  height: 88%;
+  border: 1px dashed rgba(200, 90, 50, 0.35);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(200, 90, 50, 0.04) 0%, rgba(81, 99, 79, 0.05) 100%);
+}
+
+.ex-libris-seal {
+  text-align: center;
+  padding: 15px;
+}
+
+/* Book Crease */
+.book-spine-crease {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  width: 3px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(255,255,255,0.2) 50%, rgba(0,0,0,0.15) 100%);
+  pointer-events: none;
+}
+
+/* Controls */
+.book-3d-controls button {
+  transition: all 0.25s ease;
+}
+
+.book-3d-controls button:hover {
+  transform: translateY(-2px);
+}
+
+/* Responsive Scaling */
+@media (max-width: 576px) {
+  .hero-3d-stage {
+    width: 280px;
+    height: 380px;
   }
-  100% {
-    transform: translateY(-14px) rotateY(3deg) rotateX(-2deg);
+  .book-3d-rig {
+    transform: scale(0.85) rotateX(10deg) rotateY(-20deg);
   }
 }
 
-.hero-book-card {
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
-  box-shadow: 0 16px 42px rgba(43, 40, 37, 0.15) !important;
-}
-
-.hero-book-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 24px 55px rgba(43, 40, 37, 0.22) !important;
-}
-
-.hero-floating-ribbon {
-  animation: ribbonPulse 3.5s ease-in-out infinite alternate;
-}
-
-@keyframes ribbonPulse {
-  0% { transform: translateY(-50%) scale(1); }
-  100% { transform: translateY(calc(-50% - 5px)) scale(1.04); }
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .book-3d-rig,
+  .book-front-cover-wrapper,
+  .book-3d-shadow {
+    transition: none !important;
+  }
 }
 
 /* ===================================================

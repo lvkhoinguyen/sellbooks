@@ -78,6 +78,7 @@ namespace WebBanSach.Controllers
         // ==========================================
         private (Coupon? coupon, decimal discountAmount, string? errorMessage) ValidateAndCalculateCoupon(string? couponCode, decimal subTotal)
         {
+            // 1. Kiểm tra mã rỗng
             if (string.IsNullOrWhiteSpace(couponCode))
             {
                 return (null, 0, "Vui lòng nhập mã giảm giá.");
@@ -86,32 +87,51 @@ namespace WebBanSach.Controllers
             var code = couponCode.Trim().ToUpper();
             var coupon = _db.Coupons.FirstOrDefault(c => c.Code.ToUpper() == code);
 
+            // 2. Kiểm tra mã tồn tại và IsActive == true
             if (coupon == null || !coupon.IsActive)
             {
                 return (null, 0, "Mã giảm giá không tồn tại hoặc đã bị vô hiệu hóa!");
             }
 
-            var now = DateTime.UtcNow;
-            if (now < coupon.StartDate)
+            // 3. Kiểm tra ngày hiện tại nằm trong khoảng [StartDate, EndDate]
+            var nowUtc = DateTime.UtcNow;
+            var nowLocal = DateTime.Now;
+
+            bool isBeforeStart = coupon.StartDate.Kind == DateTimeKind.Utc 
+                ? nowUtc < coupon.StartDate 
+                : nowLocal < coupon.StartDate;
+
+            if (isBeforeStart)
             {
                 return (null, 0, $"Mã giảm giá chưa đến ngày áp dụng (bắt đầu từ {coupon.StartDate:dd/MM/yyyy})!");
             }
 
-            if (now > coupon.EndDate)
+            var endBoundary = coupon.EndDate.TimeOfDay == TimeSpan.Zero 
+                ? coupon.EndDate.Date.AddDays(1).AddTicks(-1) 
+                : coupon.EndDate;
+
+            bool isAfterEnd = coupon.EndDate.Kind == DateTimeKind.Utc 
+                ? nowUtc > endBoundary 
+                : nowLocal > endBoundary;
+
+            if (isAfterEnd)
             {
                 return (null, 0, $"Mã giảm giá đã hết hạn sử dụng vào {coupon.EndDate:dd/MM/yyyy}!");
             }
 
+            // 4. Kiểm tra TimesUsed < UsageLimit
             if (coupon.TimesUsed >= coupon.UsageLimit)
             {
                 return (null, 0, "Mã giảm giá đã hết lượt sử dụng!");
             }
 
+            // 5. Kiểm tra OrderTotal có đạt mức MinOrderAmount không
             if (subTotal < coupon.MinOrderAmount)
             {
                 return (null, 0, $"Đơn hàng tối thiểu phải từ {coupon.MinOrderAmount:#,##0}₫ để áp dụng mã \"{coupon.Code}\"!");
             }
 
+            // 6. Tính toán số tiền được giảm DiscountAmount
             decimal discountAmount = 0;
             if (coupon.DiscountType == DiscountType.Percentage)
             {
@@ -122,6 +142,7 @@ namespace WebBanSach.Controllers
                 discountAmount = coupon.DiscountValue;
             }
 
+            // Không để số tiền giảm vượt quá giá trị đơn hàng
             if (discountAmount > subTotal)
             {
                 discountAmount = subTotal;
@@ -131,8 +152,37 @@ namespace WebBanSach.Controllers
         }
 
         [HttpPost]
-        public IActionResult ApplyCoupon(string couponCode, string? returnUrl = null)
+        public async Task<IActionResult> ApplyCoupon(string? couponCode, string? returnUrl = null)
         {
+            // Hỗ trợ đọc couponCode từ JSON body nếu client gửi bằng fetch/axios
+            if (string.IsNullOrWhiteSpace(couponCode) && Request.HasJsonContentType())
+            {
+                try
+                {
+                    using var reader = new StreamReader(Request.Body);
+                    var body = await reader.ReadToEndAsync();
+                    if (!string.IsNullOrWhiteSpace(body))
+                    {
+                        using var jsonDoc = System.Text.Json.JsonDocument.Parse(body);
+                        if (jsonDoc.RootElement.TryGetProperty("couponCode", out var codeElem) ||
+                            jsonDoc.RootElement.TryGetProperty("CouponCode", out codeElem))
+                        {
+                            couponCode = codeElem.GetString();
+                        }
+                        if (string.IsNullOrEmpty(returnUrl) &&
+                            (jsonDoc.RootElement.TryGetProperty("returnUrl", out var urlElem) ||
+                             jsonDoc.RootElement.TryGetProperty("ReturnUrl", out urlElem)))
+                        {
+                            returnUrl = urlElem.GetString();
+                        }
+                    }
+                }
+                catch
+                {
+                    // Tiếp tục xử lý với couponCode hiện tại
+                }
+            }
+
             var userId = GetCurrentUserId();
             var shoppingCartList = _db.ShoppingCarts
                 .Include(u => u.Book)
@@ -161,20 +211,27 @@ namespace WebBanSach.Controllers
             }
             else if (coupon != null)
             {
+                // Lưu mã vào Session của đơn hàng hiện tại
                 HttpContext.Session.SetString(SD.SessionCoupon, coupon.Code);
                 var successMessage = $"Áp dụng mã giảm giá \"{coupon.Code}\" thành công! Bạn được giảm {discountAmount:#,##0}₫.";
 
                 if (isAjax)
                 {
                     decimal shippingFee = subTotal >= 250000 ? 0 : 30000;
+                    decimal updatedOrderTotal = Math.Max(0, subTotal - discountAmount);
                     decimal finalTotal = Math.Max(0, subTotal + shippingFee - discountAmount);
+
                     return Json(new
                     {
                         success = true,
                         message = successMessage,
                         code = coupon.Code,
+                        couponCode = coupon.Code,
                         discountAmount = discountAmount,
+                        discountType = coupon.DiscountType.ToString(),
+                        discountValue = coupon.DiscountValue,
                         subTotal = subTotal,
+                        orderTotal = updatedOrderTotal,
                         shippingFee = shippingFee,
                         finalTotal = finalTotal
                     });

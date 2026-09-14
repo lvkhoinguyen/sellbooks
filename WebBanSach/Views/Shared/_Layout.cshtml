@@ -63,6 +63,9 @@
                                 <a class="nav-link" asp-area="" asp-controller="Book" asp-action="Index">Quản Lý Sách</a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Coupon" asp-action="Index">Quản Lý Voucher</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Index">Quản Lý Đơn Hàng</a>
                             </li>
                         }
@@ -131,6 +134,7 @@
                                         <li><a class="dropdown-item" asp-controller="Order" asp-action="Index"><i class="bi bi-box-seam me-2 text-terracotta"></i>Quản lý đơn hàng</a></li>
                                         <li><a class="dropdown-item" asp-controller="Book" asp-action="Index"><i class="bi bi-book me-2 text-terracotta"></i>Quản trị sách</a></li>
                                         <li><a class="dropdown-item" asp-controller="Category" asp-action="Index"><i class="bi bi-sliders me-2 text-terracotta"></i>Quản trị danh mục</a></li>
+                                        <li><a class="dropdown-item" asp-controller="Coupon" asp-action="Index"><i class="bi bi-ticket-perforated me-2 text-terracotta"></i>Quản lý mã giảm giá</a></li>
                                         <li><hr class="dropdown-divider"></li>
                                     }
                                     <li><a class="dropdown-item" asp-controller="Order" asp-action="Index"><i class="bi bi-receipt me-2 text-terracotta"></i>Đơn hàng của tôi</a></li>
@@ -248,6 +252,7 @@
     <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

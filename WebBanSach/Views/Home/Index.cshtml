@@ -56,33 +56,126 @@
 
             <!-- Right 3D Book Showcase -->
             <div class="col-lg-5 text-center">
-                <div class="hero-book-stage">
-                    <div id="hero3DBook" class="hero-book-3d position-relative d-inline-block mx-auto" style="max-width: 360px;">
-                        <!-- Ribbon -->
-                        <div class="position-absolute top-0 end-0 translate-middle-y me-3 bg-sage text-white px-3 py-1 rounded-pill shadow-sm small fw-bold text-uppercase d-flex align-items-center gap-1 hero-floating-ribbon" style="z-index: 3; letter-spacing: 0.08em; font-size: 0.72rem;">
-                            <i class="bi bi-stars"></i>
-                            <span>Sách Tiêu Biểu • Tháng 10</span>
-                        </div>
+                <div class="hero-3d-book-wrapper">
+                    <!-- Ribbon -->
+                    <div class="d-inline-flex align-items-center gap-1 bg-sage text-white px-3 py-1 rounded-pill shadow-sm small fw-bold text-uppercase mb-3 hero-floating-ribbon" style="letter-spacing: 0.08em; font-size: 0.72rem;">
+                        <i class="bi bi-stars"></i>
+                        <span>Ấn Bản Tuyển Chọn • Kéo Xoay 3D &amp; Lật Mở</span>
+                    </div>
 
-                        <!-- Book Card Container with 3D Depth -->
-                        <div class="bg-white p-4 rounded-4 shadow-lg text-start position-relative hero-book-card" style="z-index: 2; border: 1px solid rgba(222, 192, 183, 0.4);">
-                            <div class="book-cover-container mb-3" style="aspect-ratio: 3/4;">
-                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfB6zfERYPybvsHk6_001w9XriafDx-0J6zio3sU9CJg0tcsYs5D0spPza8S2p7E8Y6LONHvD-kX012pcPXJzh38ETdJMWvIdRx6lQsSt5gvnMmdl_AMhC5mxJEphT25QAhBGsA-Cu-B_ta3m9swZcMwkNYh-gdrnjUPRQ6Knxde2uQN0OvLxM6USncHpbV5Jfm2OMVglg_cehHPFlf-61jFqWwzsxrbCi9LAELl38QNCwW02vFk" 
-                                     alt="The Echoes of Autumn" class="w-100 h-100 object-fit-cover" />
-                                <div class="book-spine-crease"></div>
-                            </div>
+                    <!-- 3D Stage Container -->
+                    <div class="hero-3d-stage" id="hero3dStage" title="Kéo chuột để xoay 360° • Click để mở/đóng sách">
+                        <!-- 3D Rig that rotates with mouse/touch -->
+                        <div class="book-3d-rig" id="book3dRig">
+                            <!-- Dynamic Ambient Drop Shadow -->
+                            <div class="book-3d-shadow" id="book3dShadow"></div>
 
-                            <div class="p-3 rounded-3 bg-surface-low d-flex align-items-center justify-content-between">
-                                <div>
-                                    <h5 class="font-serif fw-bold mb-1 fs-6 text-dark">The Echoes of Autumn</h5>
-                                    <p class="small text-muted mb-0">Tác giả Eliza J. Harrison • <span class="text-sage fw-semibold">Bìa cứng</span></p>
+                            <!-- The Complete 3D Book Object -->
+                            <div class="book-3d-model" id="book3dModel">
+                                <!-- 1. Back Cover -->
+                                <div class="book-face book-back-cover">
+                                    <div class="book-back-inner">
+                                        <div class="book-barcode-area">
+                                            <div class="barcode-lines"></div>
+                                            <span class="barcode-text">ISBN 978-604-1-23456-7</span>
+                                        </div>
+                                        <div class="book-publisher-tag">
+                                            <i class="bi bi-book-half me-1"></i>PageCraft Literary Press
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="text-end">
-                                    <div class="fw-bold text-terracotta fs-5">245.000₫</div>
-                                    <small class="text-muted text-decoration-line-through">295.000₫</small>
+
+                                <!-- 2. Pages Block (Paper Edges) -->
+                                <div class="book-face book-pages-right"></div>
+                                <div class="book-face book-pages-top"></div>
+                                <div class="book-face book-pages-bottom"></div>
+
+                                <!-- 3. Inside Spread (Revealed when front cover is opened) -->
+                                <div class="book-face book-inside-spread">
+                                    <div class="inside-page-content">
+                                        <div class="inside-header">
+                                            <span class="editorial-badge">Trích Đoạn Tuyển Chọn</span>
+                                            <div class="inside-stars">
+                                                <i class="bi bi-star-fill text-terracotta"></i>
+                                                <i class="bi bi-star-fill text-terracotta"></i>
+                                                <i class="bi bi-star-fill text-terracotta"></i>
+                                                <i class="bi bi-star-fill text-terracotta"></i>
+                                                <i class="bi bi-star-fill text-terracotta"></i>
+                                            </div>
+                                        </div>
+                                        <h4 class="inside-title font-serif">The Echoes of Autumn</h4>
+                                        <p class="inside-author">Tác phẩm của <em>Eliza J. Harrison</em></p>
+                                        <blockquote class="inside-quote font-serif">
+                                            “Có những mùa thu không chỉ đi qua ngoài khung cửa sổ, mà lắng sâu vào từng nếp nghĩ của cuộc đời...”
+                                        </blockquote>
+                                        <div class="inside-pricing">
+                                            <div class="price-val">245.000₫</div>
+                                            <span class="badge bg-sage text-white rounded-pill px-2 py-1">Bìa Cứng Cao Cấp</span>
+                                        </div>
+                                        <div class="inside-actions">
+                                            <a asp-controller="Home" asp-action="Shop" class="btn btn-sm btn-terracotta rounded-pill px-3 py-1 fw-semibold text-white">
+                                                <i class="bi bi-bag-plus-fill me-1"></i>Đặt Sách Ngay
+                                            </a>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2 py-1" id="btnInsideClose">
+                                                <i class="bi bi-x-circle me-1"></i>Gập Lại
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 4. Spine (Gáy sách 3D) -->
+                                <div class="book-face book-spine">
+                                    <div class="spine-content">
+                                        <span class="spine-logo"><i class="bi bi-book-half"></i></span>
+                                        <span class="spine-title font-serif">THE ECHOES OF AUTUMN</span>
+                                        <span class="spine-author">E. J. HARRISON</span>
+                                    </div>
+                                </div>
+
+                                <!-- 5. Front Cover (Hinged on the left edge, flips open) -->
+                                <div class="book-front-cover-wrapper" id="bookFrontCoverWrapper">
+                                    <!-- Outer Face of Front Cover -->
+                                    <div class="book-cover-face book-cover-front">
+                                        <div class="book-cover-art">
+                                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXfB6zfERYPybvsHk6_001w9XriafDx-0J6zio3sU9CJg0tcsYs5D0spPza8S2p7E8Y6LONHvD-kX012pcPXJzh38ETdJMWvIdRx6lQsSt5gvnMmdl_AMhC5mxJEphT25QAhBGsA-Cu-B_ta3m9swZcMwkNYh-gdrnjUPRQ6Knxde2uQN0OvLxM6USncHpbV5Jfm2OMVglg_cehHPFlf-61jFqWwzsxrbCi9LAELl38QNCwW02vFk" 
+                                                 alt="The Echoes of Autumn" class="cover-image" />
+                                            <div class="cover-gold-foil-overlay"></div>
+                                            <div class="book-spine-crease"></div>
+                                            <div class="cover-click-hint">
+                                                <i class="bi bi-hand-index-thumb-fill me-1"></i>Nhấn để mở
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Inner Face of Front Cover (Visible when flipped open) -->
+                                    <div class="book-cover-face book-cover-inner">
+                                        <div class="inner-cover-marbling">
+                                            <div class="ex-libris-seal">
+                                                <i class="bi bi-bookmark-heart fs-3 text-terracotta"></i>
+                                                <span class="font-serif fw-bold small text-dark d-block mt-1">Ex Libris PageCraft</span>
+                                                <small class="text-muted" style="font-size: 0.65rem;">Bản in đặc biệt số 082/500</small>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- Interactive Control Panel Below Book -->
+                    <div class="book-3d-controls mt-4 d-flex flex-wrap align-items-center justify-content-center gap-2">
+                        <button type="button" class="btn btn-sm btn-terracotta rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-2" id="btnToggleOpenBook">
+                            <i class="bi bi-book-half"></i>
+                            <span id="btnToggleOpenText">Lật Mở Sách</span>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 shadow-sm d-inline-flex align-items-center gap-1" id="btnResetBookView" title="Đặt lại góc nhìn thẳng">
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <span>Góc Chuẩn</span>
+                        </button>
+                    </div>
+                    <div class="small text-muted mt-2 d-flex align-items-center justify-content-center gap-2" style="font-size: 0.75rem;">
+                        <i class="bi bi-cursor-fill text-terracotta"></i>
+                        <span>Kéo chuột để xoay 3D • Nhấp vào sách để mở trang</span>
                     </div>
                 </div>
             </div>
